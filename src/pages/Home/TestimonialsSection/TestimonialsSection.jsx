@@ -3,43 +3,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 
 const TestimonialsCarousel = () => {
-  const testimonials = [
-    {
-      id: 1,
-      quote: "Posture Pro has transformed my daily comfort. After just two weeks of use, my back pain reduced significantly.",
-      author: "Rasel Ahamed",
-      role: "CTO",
-      avatar: "https://randomuser.me/api/portraits/men/32.jpg"
-    },
-    {
-      id: 2,
-      quote: "As a designer who sits all day, this corrector helped improve my posture without being uncomfortable.",
-      author: "Awlad Hossin",
-      role: "Senior Product Designer",
-      avatar: "https://randomuser.me/api/portraits/men/44.jpg"
-    },
-    {
-      id: 3,
-      quote: "The best investment I've made for my health. My team has all started using it after seeing my results.",
-      author: "Nasir Uddin",
-      role: "CEO",
-      avatar: "https://randomuser.me/api/portraits/men/68.jpg"
-    },
-    {
-      id: 4,
-      quote: "Simple yet effective. I wear it during work hours and my shoulders naturally stay aligned now.",
-      author: "Awk Seng",
-      role: "Marketing Director",
-      avatar: "https://randomuser.me/api/portraits/men/75.jpg"
-    },
-    {
-      id: 5,
-      quote: "After trying several posture correctors, this one actually stays in place and does its job well.",
-      author: "Fatima Akter",
-      role: "Software Engineer",
-      avatar: "https://randomuser.me/api/portraits/women/65.jpg"
-    }
-  ];
+  const testimonials = Array.from({ length: 16 }, (_, i) => ({
+    id: i + 1,
+    quote: `This is testimonial number ${i + 1}. Posture Pro has improved my daily routine and reduced discomfort significantly.`,
+    author: `Customer ${i + 1}`,
+    role: `Role ${i + 1}`,
+    avatar: `https://randomuser.me/api/portraits/men/${i + 10}.jpg`
+  }));
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -161,7 +131,6 @@ const TestimonialsCarousel = () => {
           </AnimatePresence>
         </div>
 
-        {/* Navigation Controls */}
         <div className="flex flex-col items-center gap-4">
           <div className="flex space-x-8">
             <button
@@ -181,7 +150,7 @@ const TestimonialsCarousel = () => {
             </button>
           </div>
 
-          <div className="flex space-x-2 mt-4">
+          <div className="flex flex-wrap justify-center space-x-2 mt-4">
             {testimonials.map((_, index) => (
               <button
                 key={index}

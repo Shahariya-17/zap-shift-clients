@@ -4,6 +4,7 @@ import HowItWorks from '../HowItWorks/HowItWorks';
 import ServicesSection from '../ServicesSection/ServicesSection';
 import MarqueeSection from '../MarqueeSection/MarqueeSection';
 import FeaturesSection from '../FeaturesSection/FeaturesSection';
+import BeMarchant from '../BeMarchant/BeMarchant';
 
 const Home = () => {
     return (
@@ -13,6 +14,7 @@ const Home = () => {
            <ServicesSection></ServicesSection>
            <MarqueeSection></MarqueeSection>
            <FeaturesSection></FeaturesSection>
+           <BeMarchant></BeMarchant>
         </div>
     );
 };

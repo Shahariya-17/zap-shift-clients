@@ -1,4 +1,5 @@
 import React from "react";
+import { motion } from "framer-motion";
 import illu from "../../../assets/Illustration.png";
 import illu2 from "../../../assets/Group 4.png";
 import illu3 from "../../../assets/call-center_24908-49658.jpg";
@@ -33,9 +34,13 @@ const FeaturesSection = () => {
       {/* Feature Cards Container */}
       <div className="space-y-6 max-w-5xl mx-auto">
         {cardData.map((card, index) => (
-          <div
+          <motion.div
             key={index}
             className="card card-side bg-white text-black items-center justify-between shadow-sm flex-col md:flex-row p-4 gap-4"
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: index * 0.1 }}
+            viewport={{ once: true, amount: 0.3 }}
           >
             {/* Image */}
             <figure className={index === cardData.length - 1 ? "" : "bg-white"}>
@@ -58,7 +63,7 @@ const FeaturesSection = () => {
                 {card.text}
               </p>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
 

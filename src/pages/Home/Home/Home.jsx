@@ -5,6 +5,7 @@ import ServicesSection from '../ServicesSection/ServicesSection';
 import MarqueeSection from '../MarqueeSection/MarqueeSection';
 import FeaturesSection from '../FeaturesSection/FeaturesSection';
 import BeMarchant from '../BeMarchant/BeMarchant';
+import TestimonialsSection from '../TestimonialsSection/TestimonialsSection';
 
 const Home = () => {
     return (
@@ -15,6 +16,7 @@ const Home = () => {
            <MarqueeSection></MarqueeSection>
            <FeaturesSection></FeaturesSection>
            <BeMarchant></BeMarchant>
+           <TestimonialsSection></TestimonialsSection>
         </div>
     );
 };

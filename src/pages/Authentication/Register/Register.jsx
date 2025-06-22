@@ -1,8 +1,10 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import useAuth from "../../../hooks/useAuth";
 import SocialLogin from "../SocialLogin/SocialLogin";
+import { motion } from "framer-motion";
+import { FaUser, FaEnvelope, FaLock } from "react-icons/fa";
 
 const Register = () => {
   const {
@@ -22,73 +24,95 @@ const Register = () => {
         console.log(error);
       });
   };
+
   return (
-    <div className="card  bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
-      <div className="card-body">
-        <h1 className="text-3xl font-bold">Create an Account!</h1>
-        <p className="mb-5">Register with Profast</p>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <fieldset className="fieldset">
-            <label className="label font-bold">Name</label>
+    <motion.div
+      className="bg-white/80 p-8 rounded-2xl shadow-xl w-full max-w-md"
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <h2 className="text-3xl font-bold text-gray-800 mb-2 flex items-center justify-center space-x-3">
+        <span>Create an Account!</span>
+        <FaUser className="text-lime-400 text-4xl" />
+      </h2>
+      <p className="mb-6 text-gray-600 text-center font-semibold">Register with ProFast</p>
+
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        {/* Name Input */}
+        <div className="relative">
+          <label className="label font-semibold text-gray-700">Name</label>
+          <div className="relative">
+            <FaUser className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600" />
             <input
-              type="name"
+              type="text"
               {...register("name", { required: true })}
-              className="input"
+              className="input input-bordered w-full pl-10 bg-gray-50 border-gray-300 text-gray-800 placeholder-gray-400 focus:bg-white focus:border-lime-400"
               placeholder="Enter your Name"
             />
-            {errors.email?.type === "required" && (
-              <p className="text-red-500">Name is required</p>
-            )}
-            <label className="label font-bold">Email</label>
+          </div>
+          {errors.name && (
+            <p className="text-red-500 text-sm mt-1">Name is required</p>
+          )}
+        </div>
+
+        {/* Email Input */}
+        <div className="relative">
+          <label className="label font-semibold text-gray-700">Email</label>
+          <div className="relative">
+            <FaEnvelope className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600" />
             <input
               type="email"
               {...register("email", { required: true })}
-              className="input"
+              className="input input-bordered w-full pl-10 bg-gray-50 border-gray-300 text-gray-800 placeholder-gray-400 focus:bg-white focus:border-lime-400"
               placeholder="Enter your Email"
             />
-            {errors.email?.type === "required" && (
-              <p className="text-red-500">Email is required</p>
-            )}
+          </div>
+          {errors.email && (
+            <p className="text-red-500 text-sm mt-1">Email is required</p>
+          )}
+        </div>
 
-            <label className="label font-bold">Password</label>
+        {/* Password Input */}
+        <div className="relative">
+          <label className="label font-semibold text-gray-700">Password</label>
+          <div className="relative">
+            <FaLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600" />
             <input
               type="password"
               {...register("password", { required: true, minLength: 6 })}
-              className="input"
+              className="input input-bordered w-full pl-10 bg-gray-50 border-gray-300 text-gray-800 placeholder-gray-400 focus:bg-white focus:border-lime-400"
               placeholder="Enter Password"
             />
-            {errors.password?.type === "required" && (
-              <p className="text-red-500">Password is required</p>
-            )}
-            {errors.password?.type === "minLength" && (
-              <p className="text-red-500">
-                Password must be 6 characters or longer
-              </p>
-            )}
-            {/* <div className="flex w-full flex-col">
-              <div className="card bg-base-300 rounded-box grid h-20 place-items-center">
-                content
-              </div>
-              <div className="divider">OR</div>
-              <div className="card bg-base-300 rounded-box grid h-20 place-items-center">
-                content
-              </div>
-            </div> */}
+          </div>
+          {errors.password?.type === "required" && (
+            <p className="text-red-500 text-sm mt-1">Password is required</p>
+          )}
+          {errors.password?.type === "minLength" && (
+            <p className="text-red-500 text-sm mt-1">
+              Password must be 6 characters or longer
+            </p>
+          )}
+        </div>
 
-            <button className="btn bg-lime-400 text-black mt-4">
-              Register
-            </button>
-          </fieldset>
-          <p>
-          Already have an account?{" "}
-          <Link to="/login" className="text-lime-400 btn-link">
-            Login
-          </Link>
-        </p>
-        </form>
-        <SocialLogin></SocialLogin>
-      </div>
-    </div>
+        <button
+          type="submit"
+          className="btn bg-lime-400 hover:bg-lime-500 text-black w-full flex items-center justify-center space-x-2"
+        >
+          <FaUser /> <span>Register</span>
+        </button>
+      </form>
+
+      <p className="text-sm mt-4 text-gray-700 text-center">
+        Already have an account?{" "}
+        <Link to="/login" className="text-lime-500 hover:underline font-semibold">
+          Login
+        </Link>
+      </p>
+
+      <div className="divider">OR</div>
+      <SocialLogin />
+    </motion.div>
   );
 };
 

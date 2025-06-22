@@ -4,13 +4,13 @@ import {
 import RootLayout from "../layouts/RootLayout";
 import Home from "../pages/Home/Home/Home";
 import AboutUs from "../pages/Home/AboutUs/AboutUs";
-import SignIn from "../pages/Home/SignIn/SignIn";
-import SignUp from "../pages/Home/SignUp/SignUp";
 import AuthLayout from "../layouts/AuthLayout";
 import Login from "../pages/Authentication/Login/Login";
 import Register from "../pages/Authentication/Register/Register";
-import Logout from "../pages/Authentication/LogOut/LogOut";
 import Coverage from "../pages/Coverage/Coverage";
+import LogOut from "../pages/Authentication/LogOut.jsx/LogOut";
+
+
 
 export const router = createBrowserRouter([
   {
@@ -29,14 +29,7 @@ export const router = createBrowserRouter([
           path: '/coverage',
           Component: Coverage
         }
-        // {
-        //     path:'/signIn',
-        //     Component:SignIn
-        // },
-        // {
-        //     path:'/signUp',
-        //     Component: SignUp
-        // }
+
     ]
   },
   {
@@ -53,7 +46,7 @@ export const router = createBrowserRouter([
       },
       {
         path:'/logout',
-        Component: Logout
+        Component: LogOut 
       }
 
     ]

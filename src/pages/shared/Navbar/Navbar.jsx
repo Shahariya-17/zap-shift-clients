@@ -12,10 +12,22 @@ const Navbar = () => {
           className={({ isActive }) =>
             isActive
               ? "bg-lime-500 text-white px-4 py-2 rounded"
-              : "px-4 py-2 rounded hover:bg-gray-100"
+              : "px-4 py-2 rounded hover:bg-gray-100 hover:text-black"
           }
         >
           Home
+        </NavLink>
+      </li>
+      <li>
+        <NavLink
+          to="/coverage"
+          className={({ isActive }) =>
+            isActive
+              ? "bg-lime-500 text-white px-4 py-2 rounded"
+              : "px-4 py-2 rounded hover:bg-gray-100 hover:text-black"
+          }
+        >
+          Coverage
         </NavLink>
       </li>
       <li>
@@ -24,7 +36,7 @@ const Navbar = () => {
           className={({ isActive }) =>
             isActive
               ? "bg-lime-500 text-white px-4 py-2 rounded"
-              : "px-4 py-2 rounded hover:bg-gray-100"
+              : "px-4 py-2 rounded hover:bg-gray-100 hover:text-black"
           }
         >
           About Us
@@ -75,7 +87,7 @@ const Navbar = () => {
       <div className="navbar-end gap-3">
         {/* Sign In Button */}
         <NavLink
-          to="/signIn"
+          to="/login"
           className={({ isActive }) =>
             `px-4 py-2 rounded-full border border-gray-300 font-medium transition ${
               isActive
@@ -84,7 +96,7 @@ const Navbar = () => {
             }`
           }
         >
-          Sign In
+          Log In
         </NavLink>
 
         {/* Be a rider button with icon */}

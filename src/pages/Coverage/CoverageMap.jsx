@@ -137,10 +137,10 @@ const CoverageMap = () => {
       </div>
 
       {/* Map */}
-      <div className="w-full h-[500px] rounded-xl overflow-hidden shadow-lg">
+      <div className="w-full h-[800px] rounded-xl overflow-hidden shadow-lg">
         <MapContainer
           center={centerPosition}
-          zoom={7}
+          zoom={8}
           scrollWheelZoom={true}
           style={{ height: "100%", width: "100%" }}
         >

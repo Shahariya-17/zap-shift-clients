@@ -15,17 +15,17 @@ const Banner = () => {
       showThumbs={false}
       showStatus={false}
     >
-      <div>
+      <div className="mt-5">
         <img src={bannerImage1} alt="Banner 1" />
-        <p className="legend">Legend 1</p>
+        <p className=" hidden md:flex text-center justify-center align-center font-bold legend">Legend 1</p>
       </div>
-      <div>
+      <div className="mt-5">
         <img src={bannerImage2} alt="Banner 2" />
-        <p className="legend">Legend 2</p>
+        <p className="hidden md:flex text-center justify-center align-center font-bold legend">Legend 2</p>
       </div>
-      <div>
+      <div className="mt-5">
         <img src={bannerImage3} alt="Banner 3" />
-        <p className="legend">Legend 3</p>
+        <p className="hidden md:flex text-center justify-center align-center font-bold legend">Legend 3</p>
       </div>
     </Carousel>
   );

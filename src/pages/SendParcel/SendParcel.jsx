@@ -78,15 +78,16 @@ const SendParcel = () => {
 
   return (
    <div
-  className="min-h-screen mb-10 mt-10 flex items-center justify-center p-6 bg-gradient-to-br from-lime-50 via-lime-100 to-lime-200"
+  className="min-h-screen mb-10 mt-10 flex items-center justify-center p-6 bg-gradient-to-br from-lime-100 via-lime-200 to-lime-300"
 >
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="max-w-5xl w-full bg-white bg-opacity-90 backdrop-blur-md rounded-xl shadow-2xl p-10 space-y-12"
+        className="max-w-5xl w-full bg-gray-100
+ bg-opacity-90 backdrop-blur-md rounded-xl shadow-2xl p-10 space-y-12"
       >
         <motion.h1
-          className="text-5xl font-extrabold text-center text-gradient mb-4"
+          className="text-5xl  font-extrabold text-center text-gradient mb-4"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
@@ -106,7 +107,7 @@ const SendParcel = () => {
 
         {/* Parcel Info */}
         <motion.section
-          className="bg-white rounded-xl shadow-md border border-gray-300 p-8"
+          className="bg-violet-50 rounded-xl shadow-md border border-gray-300 p-8"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
@@ -114,7 +115,7 @@ const SendParcel = () => {
           whileHover={{ scale: 1.03, boxShadow: "0 15px 30px rgba(102, 126, 234, 0.4)" }}
           transition={{ type: "spring", stiffness: 300 }}
         >
-          <h2 className="text-2xl font-semibold mb-6 border-b border-gray-300 pb-3">
+          <h2 className="text-2xl font-semibold  mb-6 border-b border-gray-300 pb-3">
             Parcel Info
           </h2>
 
@@ -174,7 +175,7 @@ const SendParcel = () => {
         <div className="flex flex-col lg:flex-row lg:space-x-10 gap-10">
           {/* Sender */}
           <motion.section
-            className="bg-white rounded-xl shadow-md border border-gray-300 p-8 flex-1"
+            className="bg-violet-50 rounded-xl shadow-md border border-gray-300 p-8 flex-1"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
@@ -309,7 +310,7 @@ const SendParcel = () => {
 
           {/* Receiver */}
           <motion.section
-            className="bg-white rounded-xl shadow-md border border-gray-300 p-8 flex-1"
+            className="bg-violet-50 rounded-xl shadow-md border border-gray-300 p-8 flex-1"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}

@@ -20,6 +20,18 @@ const Navbar = () => {
       </li>
       <li className="whitespace-nowrap">
         <NavLink
+          to="/sendParcel"
+          className={({ isActive }) =>
+            isActive
+              ? "bg-lime-500 text-white px-3 md:px-4 py-2 rounded text-sm md:text-base"
+              : "px-3 md:px-4 py-2 rounded hover:bg-gray-100 hover:text-black text-sm md:text-base"
+          }
+        >
+          Send Parcel
+        </NavLink>
+      </li>
+      <li className="whitespace-nowrap">
+        <NavLink
           to="/coverage"
           className={({ isActive }) =>
             isActive

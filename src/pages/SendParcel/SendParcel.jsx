@@ -1,1200 +1,386 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { toast, ToastContainer } from "react-toastify";
-import { motion } from "framer-motion";
-import "react-toastify/dist/ReactToastify.css";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+import moment from "moment";
+import useAuth from "../../hooks/useAuth";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
-const regions = ["Region A", "Region B", "Region C"];
-const serviceCenters = {
-  "Region A": ["Center A1", "Center A2"],
-  "Region B": ["Center B1", "Center B2"],
-  "Region C": ["Center C1", "Center C2"],
-};
+const MySwal = withReactContent(Swal);
 
-const zilas = [
-  "Bagerhat",
-  "Bandarban",
-  "Barguna",
-  "Barisal",
-  "Bhola",
-  "Bogra",
-  "Brahmanbaria",
-  "Chandpur",
-  "Chattogram",
-  "Chuadanga",
-  "Comilla",
-  "Cox's Bazar",
-  "Dhaka",
-  "Dinajpur",
-  "Faridpur",
-  "Feni",
-  "Gaibandha",
-  "Gazipur",
-  "Gopalganj",
-  "Habiganj",
-  "Jamalpur",
-  "Jashore",
-  "Jhalokati",
-  "Jhenaidah",
-  "Joypurhat",
-  "Khagrachari",
-  "Khulna",
-  "Kishoreganj",
-  "Kurigram",
-  "Kushtia",
-  "Lakshmipur",
-  "Lalmonirhat",
-  "Madaripur",
-  "Magura",
-  "Manikganj",
-  "Meherpur",
-  "Munshiganj",
-  "Mymensingh",
-  "Naogaon",
-  "Narail",
-  "Narayanganj",
-  "Narsingdi",
-  "Natore",
-  "Netrokona",
-  "Nilphamari",
-  "Noakhali",
-  "Pabna",
-  "Panchagarh",
-  "Patuakhali",
-  "Pirojpur",
-  "Rajbari",
-  "Rajshahi",
-  "Rangamati",
-  "Rangpur",
-  "Satkhira",
-  "Shariatpur",
-  "Sherpur",
-  "Sirajganj",
-  "Sunamganj",
-  "Sylhet",
-  "Tangail",
-  "Thakurgaon"
-];
+const SendParcel = ({ senderName = "Shahariyar" }) => {
+  
 
-// Full 64 zilar upozila data example (shudhu 5 zilar diye example dilam)
-const upozilasData = {
-  Bagerhat: [
-    "Bagerhat Sadar",
-    "Kachua",
-    "Morrelganj",
-    "Rampal",
-    "Mollahat",
-    "Sarankhola",
-  ],
-  Bandarban: [
-    "Bandarban Sadar",
-    "Ruma",
-    "Thanchi",
-    "Alikadam",
-    "Lama",
-  ],
-  Barguna: [
-    "Amtali",
-    "Bamna",
-    "Barguna Sadar",
-    "Betagi",
-    "Patharghata",
-    "Taltali",
-  ],
-  Barisal: [
-    "Agailjhara",
-    "Babuganj",
-    "Bakerganj",
-    "Banaripara",
-    "Gaurnadi",
-    "Hizla",
-    "Barisal Sadar",
-    "Mehendiganj",
-    "Muladi",
-  ],
-  Bhola: [
-    "Bhola Sadar",
-    "Burhanuddin",
-    "Char Fasson",
-    "Daulatkhan",
-    "Lalmohan",
-    "Manpura",
-    "Tazumuddin",
-  ],
-  Bogra: [
-    "Adamdighi",
-    "Bogra Sadar",
-    "Dhunat",
-    "Gabtali",
-    "Kahaloo",
-    "Nandigram",
-    "Shajahanpur",
-    "Sariakandi",
-    "Sherpur",
-    "Shibganj",
-  ],
-  Brahmanbaria: [
-    "Ashuganj",
-    "Brahmanbaria Sadar",
-    "Kasba",
-    "Bancharampur",
-    "Bijoynagar",
-    "Nasirnagar",
-    "Akhaura",
-    "Nasirnagar",
-  ],
-  Chandpur: [
-    "Chandpur Sadar",
-    "Haimchar",
-    "Kachua",
-    "Haziganj",
-    "Shahrasti",
-    "Faridgonj",
-    "Hajiganj",
-  ],
-  Chattogram: [
-    "Pahartali",
-    "Patiya",
-    "Fatikchhari",
-    "Rangunia",
-    "Satkania",
-    "Boalkhali",
-    "Chandanaish",
-    "Lohagara",
-    "Mirsharai",
-    "Hathazari",
-    "Sandwip",
-    "Rangamati Sadar",
-  ],
-  Chuadanga: [
-    "Alamdanga",
-    "Chuadanga Sadar",
-    "Damurhuda",
-    "Jibannagar",
-  ],
-  Comilla: [
-    "Barura",
-    "Daudkandi",
-    "Laksam",
-    "Muradnagar",
-    "Comilla Sadar Dakshin",
-    "Comilla Sadar Uttar",
-    "Homna",
-    "Meghna",
-    "Titas",
-    "Debidwar",
-    "Manohargonj",
-    "Chauddagram",
-  ],
-  CoxsBazar: [
-    "Cox's Bazar Sadar",
-    "Kutubdia",
-    "Teknaf",
-    "Ukhia",
-    "Maheshkhali",
-  ],
-  Dhaka: [
-    "Dhamrai",
-    "Dohar",
-    "Keraniganj",
-    "Nawabganj",
-    "Savar",
-  ],
-  Dinajpur: [
-    "Birampur",
-    "Biral",
-    "Boda",
-    "Chirirbandar",
-    "Dinajpur Sadar",
-    "Ghoraghat",
-    "Hakimpur",
-    "Kaharole",
-    "Khansama",
-    "Nawabganj",
-    "Parbatipur",
-  ],
-  Faridpur: [
-    "Alfadanga",
-    "Bhanga",
-    "Boalmari",
-    "Charbhadrasan",
-    "Faridpur Sadar",
-    "Madhukhali",
-    "Nagarkanda",
-    "Sadarpur",
-    "Saltha",
-  ],
-  Feni: [
-    "Daganbhuiyan",
-    "Fulgazi",
-    "Feni Sadar",
-    "Parshuram",
-  ],
-  Gaibandha: [
-    "Palashbari",
-    "Sadullapur",
-    "Saghata",
-    "Gaibandha Sadar",
-    "Gobindaganj",
-    "Phulchhari",
-    "Sundarganj",
-  ],
-  Gazipur: [
-    "Gazipur Sadar",
-    "Kaliakair",
-    "Kapasia",
-    "Sreepur",
-  ],
-  Gopalganj: [
-    "Gopalganj Sadar",
-    "Kashiani",
-    "Muksudpur",
-  ],
-  Habiganj: [
-    "Ajmiriganj",
-    "Bahubal",
-    "Baniachang",
-    "Habiganj Sadar",
-    "Lakhai",
-    "Madhabpur",
-    "Nabiganj",
-  ],
-  Jamalpur: [
-    "Baksiganj",
-    "Dewanganj",
-    "Islampur",
-    "Jamalpur Sadar",
-    "Madarganj",
-    "Melandaha",
-  ],
-  Jashore: [
-    "Chaugachha",
-    "Jhikargachha",
-    "Keshabpur",
-    "Jessore Sadar",
-    "Manirampur",
-    "Sharsha",
-  ],
-  Jhalokati: [
-    "Jhalokati Sadar",
-    "Kathalia",
-    "Nalchity",
-  ],
-  Jhenaidah: [
-    "Harinakunda",
-    "Jhenaidah Sadar",
-    "Kaliganj",
-    "Kotchandpur",
-    "Shailkupa",
-  ],
-  Joypurhat: [
-    "Akkelpur",
-    "Joypurhat Sadar",
-    "Khetlal",
-    "Panchbibi",
-  ],
-  Khagrachari: [
-    "Dighinala",
-    "Guimara",
-    "Khagrachhari Sadar",
-    "Lakshmichhari",
-    "Manikchhari",
-    "Panchhari",
-    "Ramgarh",
-    "Rangamati",
-    "Lakshmichhari",
-    "Mahalchhari",
-  ],
-  Khulna: [
-    "Batiaghata",
-    "Dumuria",
-    "Dighalia",
-    "Koyra",
-    "Paikgachha",
-    "Phultala",
-    "Rupsha",
-    "Terokhada",
-    "Khulna Sadar",
-  ],
-  Kishoreganj: [
-    "Bajitpur",
-    "Bhairab",
-    "Hossainpur",
-    "Itna",
-    "Katiadi",
-    "Kishoreganj Sadar",
-    "Karimganj",
-    "Kuliarchar",
-    "Mithamain",
-    "Nikli",
-    "Pakundia",
-  ],
-  Kurigram: [
-    "Chilmari",
-    "Phulbari",
-    "Rowmari",
-    "Ulipur",
-    "Kurigram Sadar",
-    "Nageshwari",
-    "Rajarhat",
-    "Bhurungamari",
-  ],
-  Kushtia: [
-    "Bheramara",
-    "Daulatpur",
-    "Kumarkhali",
-    "Kushtia Sadar",
-    "Mirpur",
-  ],
-  Lakshmipur: [
-    "Lakshmipur Sadar",
-    "Raipur",
-    "Ramganj",
-  ],
-  Lalmonirhat: [
-    "Aditmari",
-    "Hatibandha",
-    "Lalmonirhat Sadar",
-    "Patgram",
-  ],
-  Madaripur: [
-    "Kalkini",
-    "Madaripur Sadar",
-    "Rajoir",
-  ],
-  Magura: [
-    "Magura Sadar",
-    "Mohammadpur",
-    "Sreepur",
-  ],
-  Manikganj: [
-    "Daulatpur",
-    "Ghior",
-    "Harirampur",
-    "Manikganj Sadar",
-    "Shivalaya",
-    "Saturia",
-  ],
-  Meherpur: [
-    "Meherpur Sadar",
-    "Mujibnagar",
-    "Gangni",
-  ],
-  Munshiganj: [
-    "Lohajang",
-    "Munshiganj Sadar",
-    "Sreenagar",
-    "Tongibari",
-  ],
-  Mymensingh: [
-    "Bhaluka",
-    "Dhobaura",
-    "Fulbaria",
-    "Gaffargaon",
-    "Haluaghat",
-    "Ishwarganj",
-    "Mymensingh Sadar",
-    "Muktagachha",
-    "Trishal",
-  ],
-  Naogaon: [
-    "Atrai",
-    "Badalgachhi",
-    "Manda",
-    "Naogaon Sadar",
-    "Niamatpur",
-    "Patnitala",
-    "Porsha",
-    "Raninagar",
-    "Sapahar",
-    "Mohadevpur",
-  ],
-  Narail: [
-    "Kalia",
-    "Lohagara",
-    "Narail Sadar",
-  ],
-  Narayanganj: [
-    "Araihazar",
-    "Bandar",
-    "Narayanganj Sadar",
-    "Rupganj",
-  ],
-  Narsingdi: [
-    "Belabo",
-    "Monohardi",
-    "Narsingdi Sadar",
-    "Palash",
-    "Shibpur",
-  ],
-  Natore: [
-    "Bagatipara",
-    "Baraigram",
-    "Natore Sadar",
-    "Naldanga",
-    "Singra",
-  ],
-  Netrokona: [
-    "Atpara",
-    "Barhatta",
-    "Durgapur",
-    "Khaliajuri",
-    "Kalmakanda",
-    "Kendua",
-    "Netrokona Sadar",
-    "Purbadhala",
-    "Madan",
-  ],
-  Nilphamari: [
-    "Dimla",
-    "Domar",
-    "Jaldhaka",
-    "Kishoreganj",
-    "Nilphamari Sadar",
-    "Saidpur",
-  ],
-  Noakhali: [
-    "Begumganj",
-    "Chatkhil",
-    "Hatiya",
-    "Kabirhat",
-    "Noakhali Sadar",
-    "Companiganj",
-    "Sonaimuri",
-  ],
-  Pabna: [
-    "Atgharia",
-    "Bera",
-    "Bhangura",
-    "Chatmohar",
-    "Faridpur",
-    "Ishwardi",
-    "Pabna Sadar",
-    "Santhia",
-  ],
-  Panchagarh: [
-    "Atwari",
-    "Boda",
-    "Debiganj",
-    "Panchagarh Sadar",
-  ],
-  Patuakhali: [
-    "Bauphal",
-    "Dumki",
-    "Galachipa",
-    "Kalapara",
-    "Mirzaganj",
-    "Patuakhali Sadar",
-    "Rangabali",
-    "Dashmina",
-  ],
-  Pirojpur: [
-    "Bhandaria",
-    "Kawkhali",
-    "Mathbaria",
-    "Nazirpur",
-    "Pirojpur Sadar",
-    "Nesarabad",
-  ],
-  Rajbari: [
-    "Baliakandi",
-    "Kalukhali",
-    "Pangsha",
-    "Rajbari Sadar",
-  ],
-  Rajshahi: [
-    "Bagha",
-    "Bagmara",
-    "Charghat",
-    "Durgapur",
-    "Godagari",
-    "Mohanpur",
-    "Paba",
-    "Puthia",
-    "Rajshahi Sadar",
-  ],
-  Rangamati: [
-    "Bagaichhari",
-    "Barkal",
-    "Juraichhari",
-    "Kaptai",
-    "Langadu",
-    "Naniarchar",
-    "Rangamati Sadar",
-    "Rajasthali",
-    "Kawkhali",
-  ],
-  Rangpur: [
-    "Badarganj",
-    "Gangachhara",
-    "Kaunia",
-    "Mithapukur",
-    "Pirgachha",
-    "Rangpur Sadar",
-    "Taraganj",
-    "Pirganj",
-    "Gangachhara",
-  ],
-  Satkhira: [
-    "Assasuni",
-    "Debhata",
-    "Kalaroa",
-    "Kaliganj",
-    "Satkhira Sadar",
-    "Tala",
-  ],
-  Shariatpur: [
-    "Damudya",
-    "Naria",
-    "Shariatpur Sadar",
-    "Bhedarganj",
-    "Zajira",
-  ],
-  Sherpur: [
-    "Nalitabari",
-    "Sherpur Sadar",
-    "Sreebardi",
-  ],
-  Sirajganj: [
-    "Belkuchi",
-    "Chauhali",
-    "Kamarkhanda",
-    "Raiganj",
-    "Sirajganj Sadar",
-    "Tarash",
-    "Ullahpara",
-  ],
-  Sunamganj: [
-    "Bishwamvarpur",
-    "Chhatak",
-    "Dakshin Sunamganj",
-    "Derai",
-    "Dharampasha",
-    "Jagannathpur",
-    "Jamalganj",
-    "Shalla",
-    "Sunamganj Sadar",
-    "Tahirpur",
-  ],
-  Sylhet: [
-    "Beanibazar",
-    "Golapganj",
-    "Gowainghat",
-    "Jaintiapur",
-    "Kanaighat",
-    "Sylhet Sadar",
-    "Balaganj",
-    "Zakiganj",
-  ],
-  Tangail: [
-    "Bhuapur",
-    "Delduar",
-    "Dhanbari",
-    "Gopalpur",
-    "Kalihati",
-    "Madhupur",
-    "Mirzapur",
-    "Nagarpur",
-    "Sakhipur",
-    "Tangail Sadar",
-  ],
-  Thakurgaon: [
-    "Baliadangi",
-    "Haripur",
-    "Ranisankail",
-    "Thakurgaon Sadar",
-  ],
-};
-
-
-const cardVariants = {
-  hidden: { opacity: 0, scale: 0.95 },
-  visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } },
-};
-
-const headingVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
-};
-
-const SendParcel = () => {
   const {
     register,
-    watch,
     handleSubmit,
+    watch,
     formState: { errors },
-  } = useForm({
-    defaultValues: {
-      senderName: "Prefilled Name",
-    },
-  });
+    reset,
+  } = useForm();
+  const { user } = useAuth();
+  const axiosSecure = useAxiosSecure();
 
-  const [formData, setFormData] = useState(null);
+  const [serviceCenters, setServiceCenters] = useState([]);
+  const [regions, setRegions] = useState([]);
+  const [senderDistricts, setSenderDistricts] = useState([]);
+  const [senderWarehouses, setSenderWarehouses] = useState([]);
+  const [receiverDistricts, setReceiverDistricts] = useState([]);
+  const [receiverWarehouses, setReceiverWarehouses] = useState([]);
 
-  const type = watch("type");
-  const senderRegion = watch("senderRegion");
-  const senderZila = watch("senderZila");
-  const receiverRegion = watch("receiverRegion");
-  const receiverZila = watch("receiverZila");
+  const parcelType = watch("type");
+  const senderRegion = watch("sender_region");
+  const senderDistrict = watch("sender_district");
+  const receiverRegion = watch("receiver_region");
+  const receiverDistrict = watch("receiver_district");
 
-  const calculateCost = (data) => {
-    let cost = data.type === "document" ? 50 : 100;
-    if (data.type === "non-document" && data.weight)
-      cost += Number(data.weight) * 10;
-    if (data.senderServiceCenter) cost += 20;
-    if (data.receiverServiceCenter) cost += 20;
-    return cost;
-  };
+  useEffect(() => {
+    fetch("/serviceCenter.json")
+      .then((res) => res.json())
+      .then((data) => {
+        setServiceCenters(data);
+        const uniqueRegions = [...new Set(data.map((c) => c.region))];
+        setRegions(uniqueRegions);
+      })
+      .catch((err) => console.error(err));
+  }, []);
 
-  const onSubmit = (data) => {
-    const cost = calculateCost(data);
-    setFormData(data);
-    toast.info(
-      <div className="flex items-center space-x-4">
-        <span>
-          Delivery cost: <b>${cost.toFixed(2)}</b>
-        </span>
-        <button onClick={handleConfirm} className="btn btn-sm btn-primary">
-          Confirm
-        </button>
-      </div>,
-      {
-        position: "top-center",
-        autoClose: false,
-        closeOnClick: false,
-        closeButton: false,
-        draggable: false,
+  useEffect(() => {
+    if (senderRegion) {
+      const filteredDistricts = serviceCenters
+        .filter((c) => c.region === senderRegion)
+        .map((c) => c.district);
+      setSenderDistricts([...new Set(filteredDistricts)]);
+      setSenderWarehouses([]);
+    } else {
+      setSenderDistricts([]);
+      setSenderWarehouses([]);
+    }
+  }, [senderRegion, serviceCenters]);
+
+  useEffect(() => {
+    if (senderRegion && senderDistrict) {
+      const matched = serviceCenters.find(
+        (c) => c.region === senderRegion && c.district === senderDistrict
+      );
+      setSenderWarehouses(matched?.covered_area || []);
+    } else {
+      setSenderWarehouses([]);
+    }
+  }, [senderRegion, senderDistrict, serviceCenters]);
+
+  useEffect(() => {
+    if (receiverRegion) {
+      const filteredDistricts = serviceCenters
+        .filter((c) => c.region === receiverRegion)
+        .map((c) => c.district);
+      setReceiverDistricts([...new Set(filteredDistricts)]);
+      setReceiverWarehouses([]);
+    } else {
+      setReceiverDistricts([]);
+      setReceiverWarehouses([]);
+    }
+  }, [receiverRegion, serviceCenters]);
+
+  useEffect(() => {
+    if (receiverRegion && receiverDistrict) {
+      const matched = serviceCenters.find(
+        (c) => c.region === receiverRegion && c.district === receiverDistrict
+      );
+      setReceiverWarehouses(matched?.covered_area || []);
+    } else {
+      setReceiverWarehouses([]);
+    }
+  }, [receiverRegion, receiverDistrict, serviceCenters]);
+
+  const onSubmit = async (data) => {
+    const sameRegion = data.sender_region === data.receiver_region;
+    const sameDistrict = data.sender_district === data.receiver_district;
+    const withinCity = sameRegion && sameDistrict;
+
+    const typeLabel = data.type === "document" ? "Document" : "Non-Document";
+    const weight = parseFloat(data.weight) || 0;
+    const zone = withinCity ? "Within City" : "Outside City";
+
+    let baseCost = 0;
+    let extraCharge = 0;
+    let conditionNote = "";
+
+    if (data.type === "document") {
+      baseCost = withinCity ? 60 : 80;
+      conditionNote = "Document pricing is flat regardless of weight.";
+    } else {
+      if (weight <= 3) {
+        baseCost = withinCity ? 110 : 150;
+        conditionNote = "Up to 3kg: Flat rate applies.";
+      } else {
+        const extraKg = weight - 3;
+        baseCost = withinCity ? 110 : 150;
+        extraCharge = 40 * extraKg + (withinCity ? 0 : 40);
+        conditionNote = `>3kg: ৳40/kg${withinCity ? "" : " + ৳40 extra"}`;
       }
-    );
+    }
+
+    const totalCost = baseCost + extraCharge;
+
+    const breakdownHTML = `
+      <div style="font-size:14px; text-align:left; line-height:1.6; background-color:#f9f9f9; padding:15px; border-radius:10px;">
+        <div style="margin-bottom:10px;">
+          <span style="font-weight:bold; color:#444;">\uD83D\uDCE6 Parcel Type:</span> <span>${typeLabel}</span><br/>
+          <span style="font-weight:bold; color:#444;">⚖️ Weight:</span> <span>${weight} kg</span><br/>
+          <span style="font-weight:bold; color:#444;">📍 Delivery Zone:</span> <span>${zone}</span>
+        </div>
+        <hr style="border: 0; border-top: 1px solid #ccc; margin: 10px 0;"/>
+        <div style="margin-bottom:10px;">
+          <span style="font-weight:bold; color:#444;">\uD83D\uDCB0 Base Cost:</span> <span>৳${baseCost}</span><br/>
+          <span style="font-weight:bold; color:#444;">➕ Extra Charges:</span> <span>৳${extraCharge} (${extraCharge > 0 ? 'Weight exceeds 3kg' : 'No extra charge'})</span><br/>
+          <span style="font-weight:bold; color:#444;">📘 Pricing Note:</span> <span>${conditionNote}</span>
+        </div>
+        <hr style="border: 0; border-top: 1px solid #ccc; margin: 10px 0;"/>
+        <div style="margin-top:10px;">
+          <span style="font-size:18px; font-weight:bold;">\uD83D\uDCB5 Total Cost: 
+            <span style="color:green;">৳${totalCost}</span>
+          </span>
+        </div>
+      </div>
+    `;
+
+    const result = await MySwal.fire({
+      title: "Delivery Cost Breakdown",
+      html: breakdownHTML,
+      icon: "info",
+      showCancelButton: true,
+      confirmButtonText: "Proceed to Payment",
+      cancelButtonText: "Go Back to Edit",
+    });
+
+    if (result.isConfirmed) {
+      const parcelData = {
+        ...data,
+        email: user?.email || "unknown",
+        creation_date: moment().format("YYYY-MM-DD HH:mm:ss"),
+        cost: totalCost,
+        tracking_id: `TRK-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
+        status: "pending",
+        payment_status: "unpaid",
+        tracking_history: [
+          {
+            status: "pending",
+            timestamp: moment().format("YYYY-MM-DD HH:mm:ss"),
+            note: "Parcel created",
+          },
+        ],
+      };
+
+      console.log("Saving Parcel:", parcelData);
+
+      axiosSecure.post('/parcels', parcelData)
+      .then(res =>{
+        console.log(res.data);
+        if(res.data.insertedId){
+          //  TODO : redirect to a payment page
+          MySwal.fire({
+            title: "Redirecting...",
+            text: "Proceeding to payment gateway.",
+            icon: "success",
+            timer: 1500,
+            showConfirmButton: false
+          });
+        }
+      })
+
+
+      
+    }
   };
 
-  const handleConfirm = () => {
-    const parcelWithDate = {
-      ...formData,
-      creation_date: new Date().toISOString(),
-    };
-    console.log("Saving to DB:", parcelWithDate);
-    toast.dismiss();
-    toast.success("Parcel info saved successfully!");
-  };
+  // (Rest of the form UI remains unchanged and continues below...)
 
   return (
-    <div className="min-h-screen mb-10 mt-10 flex items-center justify-center p-6 bg-gradient-to-br from-lime-100 via-lime-200 to-lime-300">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="max-w-5xl w-full bg-gray-100 bg-opacity-90 backdrop-blur-md rounded-xl shadow-2xl p-10 space-y-12"
-      >
-        <motion.h1
-          className="text-5xl font-extrabold text-center text-gradient mb-4"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={headingVariants}
-        >
-          Send a Parcel
-        </motion.h1>
-        <motion.p
-          className="text-center text-gray-700 max-w-3xl mx-auto mb-8"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={headingVariants}
-        >
-          Fill in the details below to send your parcel quickly and securely.
-        </motion.p>
-
+    <div className="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-lg">
+      <h2 className="text-2xl font-bold text-center">Send a Parcel</h2>
+      <p className="text-center text-gray-500 mb-6">
+        Fill in the required details to submit your parcel
+      </p>
+       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Parcel Info */}
-        <motion.section
-          className="bg-violet-50 rounded-xl shadow-md border border-gray-300 p-8"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={cardVariants}
-          whileHover={{
-            scale: 1.03,
-            boxShadow: "0 15px 30px rgba(102, 126, 234, 0.4)",
-          }}
-          transition={{ type: "spring", stiffness: 300 }}
-        >
-          <h2 className="text-2xl font-semibold mb-6 border-b border-gray-300 pb-3">
-            Parcel Info
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-              <label htmlFor="type" className="block font-medium mb-1">
-                Type <span className="text-red-500">*</span>
-              </label>
-              <select
-                id="type"
-                {...register("type", { required: "Parcel type is required" })}
-                className="w-full input input-bordered focus:ring-indigo-500 focus:border-indigo-500 transition-shadow"
-              >
-                <option value="">Select type</option>
-                <option value="document">Document</option>
-                <option value="non-document">Non-document</option>
-              </select>
-              {errors.type && (
-                <p className="text-red-500 mt-1">{errors.type.message}</p>
-              )}
-            </div>
-
-            <div>
-              <label htmlFor="title" className="block font-medium mb-1">
-                Parcel Name <span className="text-red-500">*</span>
-              </label>
-              <input
-                id="title"
-                type="text"
-                {...register("title", { required: "Title is required" })}
-                className="w-full input input-bordered focus:ring-indigo-500 focus:border-indigo-500 transition-shadow"
-                placeholder="Describe your parcel"
-              />
-              {errors.title && (
-                <p className="text-red-500 mt-1">{errors.title.message}</p>
-              )}
-            </div>
-
-            {type === "non-document" && (
-              <div>
-                <label htmlFor="weight" className="block font-medium mb-1">
-                  Weight (kg)
-                </label>
+        <div>
+          <h3 className="text-lg font-semibold mb-2">📦 Parcel Info</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="flex items-center space-x-4">
+              <label className="label cursor-pointer">
                 <input
-                  id="weight"
-                  type="number"
-                  step="0.01"
-                  {...register("weight", {
-                    min: { value: 0, message: "Weight must be positive" },
-                  })}
-                  className="w-full input input-bordered focus:ring-indigo-500 focus:border-indigo-500 transition-shadow"
-                  placeholder="Parcel weight"
+                  type="radio"
+                  value="document"
+                  {...register("type", { required: true })}
+                  className="radio"
                 />
-                {errors.weight && (
-                  <p className="text-red-500 mt-1">{errors.weight.message}</p>
-                )}
-              </div>
+                <span className="ml-2">Document</span>
+              </label>
+              <label className="label cursor-pointer">
+                <input
+                  type="radio"
+                  value="non-document"
+                  {...register("type", { required: true })}
+                  className="radio"
+                />
+                <span className="ml-2">Non-Document</span>
+              </label>
+            </div>
+            <input
+              type="text"
+              {...register("title", { required: true })}
+              placeholder="Parcel Title"
+              className="input input-bordered w-full"
+            />
+            {parcelType === "non-document" && (
+              <input
+                type="number"
+                step="0.1"
+                {...register("weight")}
+                placeholder="Weight (kg)"
+                className="input input-bordered w-full"
+              />
             )}
           </div>
-        </motion.section>
-
-        {/* Sender & Receiver Info */}
-        <div className="flex flex-col lg:flex-row lg:space-x-10 gap-10">
-          {/* Sender Info */}
-          <motion.section
-            className="bg-violet-50 rounded-xl shadow-md border border-gray-300 p-8 flex-1"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={cardVariants}
-            whileHover={{
-              scale: 1.03,
-              boxShadow: "0 15px 30px rgba(118, 75, 162, 0.4)",
-            }}
-            transition={{ type: "spring", stiffness: 300 }}
-          >
-            <h2 className="text-2xl font-semibold mb-6 border-b border-gray-300 pb-3">
-              Sender Info
-            </h2>
-            <div className="space-y-5">
-              <div>
-                <label htmlFor="senderName" className="block font-medium mb-1">
-                  Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  id="senderName"
-                  type="text"
-                  {...register("senderName", { required: "Name is required" })}
-                  className="w-full input input-bordered bg-gray-100 cursor-not-allowed focus:ring-indigo-500 focus:border-indigo-500 transition-shadow"
-                  readOnly
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="senderContact"
-                  className="block font-medium mb-1"
-                >
-                  Contact <span className="text-red-500">*</span>
-                </label>
-                <input
-                  id="senderContact"
-                  type="tel"
-                  {...register("senderContact", {
-                    required: "Contact is required",
-                    pattern: {
-                      value: /^[0-9\-+() ]+$/,
-                      message: "Invalid phone number",
-                    },
-                  })}
-                  className="w-full input input-bordered focus:ring-indigo-500 focus:border-indigo-500 transition-shadow"
-                  placeholder="Phone number"
-                />
-                {errors.senderContact && (
-                  <p className="text-red-500 mt-1">
-                    {errors.senderContact.message}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label
-                  htmlFor="senderRegion"
-                  className="block font-medium mb-1"
-                >
-                  Select Region <span className="text-red-500">*</span>
-                </label>
-                <select
-                  id="senderRegion"
-                  {...register("senderRegion", { required: "Region is required" })}
-                  className="w-full input input-bordered focus:ring-indigo-500 focus:border-indigo-500 transition-shadow"
-                >
-                  <option value="">Select region</option>
-                  {regions.map((r) => (
-                    <option key={r} value={r}>
-                      {r}
-                    </option>
-                  ))}
-                </select>
-                {errors.senderRegion && (
-                  <p className="text-red-500 mt-1">{errors.senderRegion.message}</p>
-                )}
-              </div>
-
-              <div>
-                <label htmlFor="senderZila" className="block font-medium mb-1">
-                  Select Zila <span className="text-red-500">*</span>
-                </label>
-                <select
-                  id="senderZila"
-                  {...register("senderZila", { required: "Zila is required" })}
-                  className="w-full input input-bordered focus:ring-indigo-500 focus:border-indigo-500 transition-shadow"
-                >
-                  <option value="">Select Zila</option>
-                  {zilas.map((zila) => (
-                    <option key={zila} value={zila}>
-                      {zila}
-                    </option>
-                  ))}
-                </select>
-                {errors.senderZila && (
-                  <p className="text-red-500 mt-1">{errors.senderZila.message}</p>
-                )}
-              </div>
-
-              {/* Sender Upozila Dropdown */}
-              <div>
-                <label
-                  htmlFor="senderUpozila"
-                  className="block font-medium mb-1"
-                >
-                  Select Upozila <span className="text-red-500">*</span>
-                </label>
-                <select
-                  id="senderUpozila"
-                  {...register("senderUpozila", {
-                    required: "Upozila is required",
-                  })}
-                  className="w-full input input-bordered focus:ring-indigo-500 focus:border-indigo-500 transition-shadow"
-                  disabled={!senderZila || !(upozilasData[senderZila]?.length > 0)}
-                >
-                  <option value="">
-                    {senderZila
-                      ? "Select upozila"
-                      : "Select zila first"}
-                  </option>
-                  {senderZila &&
-                    upozilasData[senderZila]?.map((u) => (
-                      <option key={u} value={u}>
-                        {u}
-                      </option>
-                    ))}
-                </select>
-                {errors.senderUpozila && (
-                  <p className="text-red-500 mt-1">{errors.senderUpozila.message}</p>
-                )}
-              </div>
-
-              <div>
-                <label
-                  htmlFor="senderServiceCenter"
-                  className="block font-medium mb-1"
-                >
-                  Select Service Center <span className="text-red-500">*</span>
-                </label>
-                <select
-                  id="senderServiceCenter"
-                  {...register("senderServiceCenter", {
-                    required: "Service Center is required",
-                  })}
-                  className="w-full input input-bordered focus:ring-indigo-500 focus:border-indigo-500 transition-shadow"
-                  disabled={!senderRegion}
-                >
-                  <option value="">
-                    {senderRegion
-                      ? "Select service center"
-                      : "Select region first"}
-                  </option>
-                  {senderRegion &&
-                    serviceCenters[senderRegion].map((c) => (
-                      <option key={c} value={c}>
-                        {c}
-                      </option>
-                    ))}
-                </select>
-                {errors.senderServiceCenter && (
-                  <p className="text-red-500 mt-1">
-                    {errors.senderServiceCenter.message}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label
-                  htmlFor="senderAddress"
-                  className="block font-medium mb-1"
-                >
-                  Address <span className="text-red-500">*</span>
-                </label>
-                <textarea
-                  id="senderAddress"
-                  {...register("senderAddress", { required: "Address is required" })}
-                  className="w-full textarea textarea-bordered resize-none focus:ring-indigo-500 focus:border-indigo-500 transition-shadow"
-                  rows={3}
-                  placeholder="Pickup address"
-                />
-                {errors.senderAddress && (
-                  <p className="text-red-500 mt-1">{errors.senderAddress.message}</p>
-                )}
-              </div>
-
-              <div>
-                <label
-                  htmlFor="pickupInstruction"
-                  className="block font-medium mb-1"
-                >
-                  Pickup Instruction <span className="text-red-500">*</span>
-                </label>
-                <textarea
-                  id="pickupInstruction"
-                  {...register("pickupInstruction", {
-                    required: "Pickup instruction is required",
-                  })}
-                  className="w-full textarea textarea-bordered resize-none focus:ring-indigo-500 focus:border-indigo-500 transition-shadow"
-                  rows={3}
-                  placeholder="Pickup instructions"
-                />
-                {errors.pickupInstruction && (
-                  <p className="text-red-500 mt-1">{errors.pickupInstruction.message}</p>
-                )}
-              </div>
-            </div>
-          </motion.section>
-
-          {/* Receiver Info */}
-          <motion.section
-            className="bg-violet-50 rounded-xl shadow-md border border-gray-300 p-8 flex-1"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={cardVariants}
-            whileHover={{
-              scale: 1.03,
-              boxShadow: "0 15px 30px rgba(107, 141, 214, 0.4)",
-            }}
-            transition={{ type: "spring", stiffness: 300 }}
-          >
-            <h2 className="text-2xl font-semibold mb-6 border-b border-gray-300 pb-3">
-              Receiver Info
-            </h2>
-            <div className="space-y-5">
-              <div>
-                <label
-                  htmlFor="receiverName"
-                  className="block font-medium mb-1"
-                >
-                  Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  id="receiverName"
-                  type="text"
-                  {...register("receiverName", { required: "Name is required" })}
-                  className="w-full input input-bordered focus:ring-indigo-500 focus:border-indigo-500 transition-shadow"
-                  placeholder="Receiver full name"
-                />
-                {errors.receiverName && (
-                  <p className="text-red-500 mt-1">{errors.receiverName.message}</p>
-                )}
-              </div>
-
-              <div>
-                <label
-                  htmlFor="receiverContact"
-                  className="block font-medium mb-1"
-                >
-                  Contact <span className="text-red-500">*</span>
-                </label>
-                <input
-                  id="receiverContact"
-                  type="tel"
-                  {...register("receiverContact", {
-                    required: "Contact is required",
-                    pattern: {
-                      value: /^[0-9\-+() ]+$/,
-                      message: "Invalid phone number",
-                    },
-                  })}
-                  className="w-full input input-bordered focus:ring-indigo-500 focus:border-indigo-500 transition-shadow"
-                  placeholder="Phone number"
-                />
-                {errors.receiverContact && (
-                  <p className="text-red-500 mt-1">{errors.receiverContact.message}</p>
-                )}
-              </div>
-
-              <div>
-                <label
-                  htmlFor="receiverRegion"
-                  className="block font-medium mb-1"
-                >
-                  Select Region <span className="text-red-500">*</span>
-                </label>
-                <select
-                  id="receiverRegion"
-                  {...register("receiverRegion", { required: "Region is required" })}
-                  className="w-full input input-bordered focus:ring-indigo-500 focus:border-indigo-500 transition-shadow"
-                >
-                  <option value="">Select region</option>
-                  {regions.map((r) => (
-                    <option key={r} value={r}>
-                      {r}
-                    </option>
-                  ))}
-                </select>
-                {errors.receiverRegion && (
-                  <p className="text-red-500 mt-1">{errors.receiverRegion.message}</p>
-                )}
-              </div>
-
-              <div>
-                <label htmlFor="receiverZila" className="block font-medium mb-1">
-                  Select Zila <span className="text-red-500">*</span>
-                </label>
-                <select
-                  id="receiverZila"
-                  {...register("receiverZila", { required: "Zila is required" })}
-                  className="w-full input input-bordered focus:ring-indigo-500 focus:border-indigo-500 transition-shadow"
-                >
-                  <option value="">Select Zila</option>
-                  {zilas.map((zila) => (
-                    <option key={zila} value={zila}>
-                      {zila}
-                    </option>
-                  ))}
-                </select>
-                {errors.receiverZila && (
-                  <p className="text-red-500 mt-1">{errors.receiverZila.message}</p>
-                )}
-              </div>
-
-              {/* Receiver Upozila Dropdown */}
-              <div>
-                <label
-                  htmlFor="receiverUpozila"
-                  className="block font-medium mb-1"
-                >
-                  Select Upozila <span className="text-red-500">*</span>
-                </label>
-                <select
-                  id="receiverUpozila"
-                  {...register("receiverUpozila", {
-                    required: "Upozila is required",
-                  })}
-                  className="w-full input input-bordered focus:ring-indigo-500 focus:border-indigo-500 transition-shadow"
-                  disabled={!receiverZila || !(upozilasData[receiverZila]?.length > 0)}
-                >
-                  <option value="">
-                    {receiverZila
-                      ? "Select upozila"
-                      : "Select zila first"}
-                  </option>
-                  {receiverZila &&
-                    upozilasData[receiverZila]?.map((u) => (
-                      <option key={u} value={u}>
-                        {u}
-                      </option>
-                    ))}
-                </select>
-                {errors.receiverUpozila && (
-                  <p className="text-red-500 mt-1">{errors.receiverUpozila.message}</p>
-                )}
-              </div>
-
-              <div>
-                <label
-                  htmlFor="receiverServiceCenter"
-                  className="block font-medium mb-1"
-                >
-                  Select Service Center <span className="text-red-500">*</span>
-                </label>
-                <select
-                  id="receiverServiceCenter"
-                  {...register("receiverServiceCenter", {
-                    required: "Service Center is required",
-                  })}
-                  className="w-full input input-bordered focus:ring-indigo-500 focus:border-indigo-500 transition-shadow"
-                  disabled={!receiverRegion}
-                >
-                  <option value="">
-                    {receiverRegion
-                      ? "Select service center"
-                      : "Select region first"}
-                  </option>
-                  {receiverRegion &&
-                    serviceCenters[receiverRegion].map((c) => (
-                      <option key={c} value={c}>
-                        {c}
-                      </option>
-                    ))}
-                </select>
-                {errors.receiverServiceCenter && (
-                  <p className="text-red-500 mt-1">
-                    {errors.receiverServiceCenter.message}
-                  </p>
-                )}
-              </div>
-
-              <div>
-                <label
-                  htmlFor="receiverAddress"
-                  className="block font-medium mb-1"
-                >
-                  Address <span className="text-red-500">*</span>
-                </label>
-                <textarea
-                  id="receiverAddress"
-                  {...register("receiverAddress", { required: "Address is required" })}
-                  className="w-full textarea textarea-bordered resize-none focus:ring-indigo-500 focus:border-indigo-500 transition-shadow"
-                  rows={3}
-                  placeholder="Delivery address"
-                />
-                {errors.receiverAddress && (
-                  <p className="text-red-500 mt-1">{errors.receiverAddress.message}</p>
-                )}
-              </div>
-            </div>
-          </motion.section>
         </div>
 
-        <motion.button
-          type="submit"
-          className="w-full bg-lime-400 text-black font-bold rounded-2xl p-2 btn-lg mt-10"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          Submit
-        </motion.button>
+        {/* Sender Info */}
+        <div className="grid md:grid-cols-2 gap-6">
+          <div>
+            <h3 className="text-lg font-semibold mb-2">🧑‍💼 Sender Info</h3>
+            <div className="space-y-4">
+              <input
+                type="text"
+                value={senderName}
+                readOnly
+                className="input input-bordered w-full bg-gray-100"
+              />
+              <input
+                type="text"
+                {...register("sender_contact", { required: true })}
+                placeholder="Contact Number"
+                className="input input-bordered w-full"
+              />
+              <select
+                {...register("sender_region", { required: true })}
+                className="select select-bordered w-full"
+              >
+                <option value="">Select Region</option>
+                {regions.map((region) => (
+                  <option key={region} value={region}>
+                    {region}
+                  </option>
+                ))}
+              </select>
+              <select
+                {...register("sender_district", { required: true })}
+                className="select select-bordered w-full"
+              >
+                <option value="">Select District</option>
+                {senderDistricts.map((district) => (
+                  <option key={district} value={district}>
+                    {district}
+                  </option>
+                ))}
+              </select>
+              <select
+                {...register("sender_service_center", { required: true })}
+                className="select select-bordered w-full"
+              >
+                <option value="">Select Area</option>
+                {senderWarehouses.map((area, idx) => (
+                  <option key={idx} value={area}>
+                    {area}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="text"
+                {...register("sender_address", { required: true })}
+                placeholder="Full Address"
+                className="input input-bordered w-full"
+              />
+              <textarea
+                {...register("pickup_instruction", { required: true })}
+                placeholder="Pickup Instruction"
+                className="textarea textarea-bordered w-full"
+              />
+            </div>
+          </div>
 
-        <ToastContainer />
+          {/* Receiver Info */}
+          <div>
+            <h3 className="text-lg font-semibold mb-2">🏠 Receiver Info</h3>
+            <div className="space-y-4">
+              <input
+                type="text"
+                {...register("receiver_name", { required: true })}
+                placeholder="Receiver Name"
+                className="input input-bordered w-full"
+              />
+              <input
+                type="text"
+                {...register("receiver_contact", { required: true })}
+                placeholder="Contact Number"
+                className="input input-bordered w-full"
+              />
+              <select
+                {...register("receiver_region", { required: true })}
+                className="select select-bordered w-full"
+              >
+                <option value="">Select Region</option>
+                {regions.map((region) => (
+                  <option key={region} value={region}>
+                    {region}
+                  </option>
+                ))}
+              </select>
+              <select
+                {...register("receiver_district", { required: true })}
+                className="select select-bordered w-full"
+              >
+                <option value="">Select District</option>
+                {receiverDistricts.map((district) => (
+                  <option key={district} value={district}>
+                    {district}
+                  </option>
+                ))}
+              </select>
+              <select
+                {...register("receiver_service_center", { required: true })}
+                className="select select-bordered w-full"
+              >
+                <option value="">Select Area</option>
+                {receiverWarehouses.map((area, idx) => (
+                  <option key={idx} value={area}>
+                    {area}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="text"
+                {...register("receiver_address", { required: true })}
+                placeholder="Delivery Address"
+                className="input input-bordered w-full"
+              />
+              <textarea
+                {...register("delivery_instruction", { required: true })}
+                placeholder="Delivery Instruction"
+                className="textarea textarea-bordered w-full"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="text-center pt-4">
+          <button
+            type="submit"
+            className="btn bg-lime-400 text-black w-full rounded-2xl px-10"
+          >
+            Submit Parcel
+          </button>
+        </div>
       </form>
     </div>
   );

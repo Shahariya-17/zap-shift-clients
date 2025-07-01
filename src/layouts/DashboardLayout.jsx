@@ -1,13 +1,16 @@
 import React from "react";
 import { NavLink, Outlet } from "react-router";
 import ProFastLogo from "../pages/shared/ProFastLogo/ProFastLogo";
+import { TbHomeHeart, TbTruckDelivery, TbPackages } from "react-icons/tb";
+import { MdPayment } from "react-icons/md";
+import { FaUserEdit } from "react-icons/fa";
+import { HiOutlineReceiptRefund } from "react-icons/hi2";
 
 const DashboardLayout = () => {
   return (
     <div className="drawer lg:drawer-open">
       <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content flex flex-col">
-
         {/* Navbar */}
         <div className="navbar lg:hidden bg-base-300 w-full">
           <div className="flex-none ">
@@ -47,10 +50,43 @@ const DashboardLayout = () => {
           {/* Sidebar content here */}
           <ProFastLogo></ProFastLogo>
           <li>
-            <a>Home</a>
+            <NavLink to="/" className="flex items-center gap-2">
+              <TbHomeHeart className="text-xl" />
+              Home
+            </NavLink>
           </li>
           <li>
-            <a><NavLink to='/dashboard/myParcels'>My Parcels</NavLink></a>
+            <NavLink
+              to="/dashboard/myParcels"
+              className="flex items-center gap-2"
+            >
+              <TbPackages className="text-xl" />
+              My Parcels
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/dashboard/paymentHistory"
+              className="flex items-center gap-2"
+            >
+              <HiOutlineReceiptRefund className="text-xl" />
+              Payment History
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/dashboard/track" className="flex items-center gap-2">
+              <TbTruckDelivery className="text-xl" />
+              Track a Package
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/dashboard/profile"
+              className="flex items-center gap-2"
+            >
+              <FaUserEdit className="text-xl" />
+              Update Profile
+            </NavLink>
           </li>
         </ul>
       </div>

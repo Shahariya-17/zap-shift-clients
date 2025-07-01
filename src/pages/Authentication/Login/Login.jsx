@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import SocialLogin from "../SocialLogin/SocialLogin";
 import { motion } from "framer-motion";
 import { FaEnvelope, FaLock, FaUserCircle } from "react-icons/fa";
+import { useLocation, useNavigate } from "react-router";
+import useAuth from "../../../hooks/useAuth";
 
 // Animation variants
 const containerVariant = {
@@ -27,8 +29,18 @@ const Login = () => {
     formState: { errors },
   } = useForm();
 
+  const {signIn} = useAuth();
+  const location= useLocation();
+  const navigate = useNavigate();
+  const from = location.state?.from || '/';
+
   const onSubmit = (data) => {
-    console.log(data);
+    signIn(data.email, data.password)
+    .then(result =>{
+      console.log(result.user);
+      navigate(from)
+    })
+    .catch(error => console.log(error))
   };
 
   return (

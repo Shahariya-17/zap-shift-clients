@@ -5,7 +5,13 @@ import { LuCircleArrowOutUpRight } from "react-icons/lu";
 import useAuth from "../../../hooks/useAuth";
 
 const Navbar = () => {
-  const { user } = useAuth();
+  const { user, logOut } = useAuth();
+
+  const handleLogOut = () =>{
+    logOut()
+    .then(result => console.log(result))
+    .catch(error =>console.log(error))
+  }
   const navItems = (
     <>
       <li className="whitespace-nowrap">
@@ -119,7 +125,11 @@ const Navbar = () => {
 
       {/* Right: Auth buttons */}
       <div className="navbar-end gap-2 md:gap-3 text-sm md:text-base whitespace-nowrap">
-        <NavLink
+        {
+          user?
+          <button onClick={handleLogOut} className="btn bg-lime-400 text-black">Log Out</button>
+          :
+          <NavLink
           to="/login"
           className={({ isActive }) =>
             `px-3 md:px-4 py-1.5 md:py-2 rounded-full border border-gray-300 font-medium transition ${
@@ -131,6 +141,8 @@ const Navbar = () => {
         >
           Log In
         </NavLink>
+
+        }
 
         <NavLink
           to="/beARider"

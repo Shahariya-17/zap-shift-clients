@@ -1,11 +1,11 @@
-import React from 'react';
-import { useQuery } from '@tanstack/react-query';
-import useAuth from '../../../hooks/useAuth';
-import useAxiosSecure from '../../../hooks/useAxiosSecure';
-import moment from 'moment';
-import Swal from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content';
-import { useNavigate } from 'react-router';
+import React from "react";
+import { useQuery } from "@tanstack/react-query";
+import useAuth from "../../../hooks/useAuth";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import moment from "moment";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+import { useNavigate } from "react-router";
 
 const MySwal = withReactContent(Swal);
 
@@ -14,8 +14,13 @@ const MyParcels = () => {
   const axiosSecure = useAxiosSecure();
   const navigate = useNavigate();
 
-  const { data: parcels = [], isLoading, isError, refetch } = useQuery({
-    queryKey: ['my-parcels', user?.email],
+  const {
+    data: parcels = [],
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
+    queryKey: ["my-parcels", user?.email],
     enabled: !!user?.email,
     queryFn: async () => {
       const res = await axiosSecure.get(`/parcels?email=${user.email}`);
@@ -23,25 +28,25 @@ const MyParcels = () => {
     },
   });
 
- const handlePay = (id) =>{
-    console.log('Proceed to payment', id);
-    navigate(`/dashboard/payment/${id}`)
- }
+  const handlePay = (id) => {
+    console.log("Proceed to payment", id);
+    navigate(`/dashboard/payment/${id}`);
+  };
 
   const handleDelete = async (parcel) => {
     const result = await MySwal.fire({
       title: `Delete "${parcel.title}"?`,
-      text: 'This action is irreversible.',
-      icon: 'warning',
+      text: "This action is irreversible.",
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonText: 'Yes, Delete',
-      confirmButtonColor: '#ef4444',
+      confirmButtonText: "Yes, Delete",
+      confirmButtonColor: "#ef4444",
     });
 
     if (result.isConfirmed) {
       const res = await axiosSecure.delete(`/parcels/${parcel._id}`);
       if (res.data.deletedCount > 0) {
-        await MySwal.fire('🗑️ Deleted!', 'Parcel has been removed.', 'success');
+        await MySwal.fire("🗑️ Deleted!", "Parcel has been removed.", "success");
         refetch();
       }
     }
@@ -93,12 +98,18 @@ const MyParcels = () => {
                   <td>{idx + 1}</td>
                   <td className="font-medium">{parcel.title}</td>
                   <td className="capitalize">{parcel.type}</td>
-                  <td>{moment(parcel.creation_date).format('DD MMM YYYY, h:mm A')}</td>
-                  <td className="font-semibold text-green-600">৳{parcel.cost}</td>
+                  <td>
+                    {moment(parcel.creation_date).format("DD MMM YYYY, h:mm A")}
+                  </td>
+                  <td className="font-semibold text-green-600">
+                    ৳{parcel.cost}
+                  </td>
                   <td>
                     <span
                       className={`badge badge-md ${
-                        parcel.payment_status === 'paid' ? 'badge-success' : 'badge-error'
+                        parcel.payment_status === "paid"
+                          ? "badge-success"
+                          : "badge-error"
                       }`}
                     >
                       {parcel.payment_status}
@@ -106,9 +117,17 @@ const MyParcels = () => {
                   </td>
                   <td className="flex flex-wrap gap-2 justify-center">
                     <button
+                      className="btn btn-sm btn-info text-white"
+                      onClick={() =>
+                        navigate(`/dashboard/parcel-details/${parcel._id}`)
+                      }
+                    >
+                      View
+                    </button>
+                    <button
                       className="btn btn-sm btn-success text-white"
                       onClick={() => handlePay(parcel._id)}
-                      disabled={parcel.payment_status === 'paid'}
+                      disabled={parcel.payment_status === "paid"}
                     >
                       Pay
                     </button>

@@ -5,12 +5,14 @@ import useAxiosSecure from '../../../hooks/useAxiosSecure';
 import moment from 'moment';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import { useNavigate } from 'react-router';
 
 const MySwal = withReactContent(Swal);
 
 const MyParcels = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
+  const navigate = useNavigate();
 
   const { data: parcels = [], isLoading, isError, refetch } = useQuery({
     queryKey: ['my-parcels', user?.email],
@@ -21,24 +23,10 @@ const MyParcels = () => {
     },
   });
 
-  const handlePay = async (parcel) => {
-    const result = await MySwal.fire({
-      title: 'Proceed to Payment',
-      html: `<p class="text-lg">💰 Pay <strong>৳${parcel.cost}</strong> for <strong>${parcel.title}</strong></p>`,
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: 'Yes, Pay',
-      confirmButtonColor: '#22c55e',
-    });
-
-    if (result.isConfirmed) {
-      const res = await axiosSecure.patch(`/parcels/pay/${parcel._id}`);
-      if (res.data.modifiedCount > 0 || res.data.matchedCount > 0) {
-        await MySwal.fire('✅ Paid!', 'Payment successful.', 'success');
-        refetch();
-      }
-    }
-  };
+ const handlePay = (id) =>{
+    console.log('Proceed to payment', id);
+    navigate(`/dashboard/payment/${id}`)
+ }
 
   const handleDelete = async (parcel) => {
     const result = await MySwal.fire({
@@ -119,7 +107,7 @@ const MyParcels = () => {
                   <td className="flex flex-wrap gap-2 justify-center">
                     <button
                       className="btn btn-sm btn-success text-white"
-                      onClick={() => handlePay(parcel)}
+                      onClick={() => handlePay(parcel._id)}
                       disabled={parcel.payment_status === 'paid'}
                     >
                       Pay

@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import useAuth from "../../../hooks/useAuth";
 import SocialLogin from "../SocialLogin/SocialLogin";
 import { motion } from "framer-motion";
 import { FaUser, FaEnvelope, FaLock } from "react-icons/fa";
+import axios from "axios";
 
 // Animation variants
 const containerVariant = {
@@ -27,18 +28,48 @@ const Register = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const { createUser } = useAuth();
+  const { createUser, updateUserProfile } = useAuth();
+  const [profilePic, setProfilePic] = useState('')
 
   const onSubmit = (data) => {
     console.log(data);
     createUser(data.email, data.password)
       .then((result) => {
         console.log(result.user);
+
+        // update userinfo in the DB
+
+        // update user profile in firebase
+        const userProfile = {
+          displayName : data.name,
+          photoURL : profilePic,
+        }
+        updateUserProfile(userProfile)
+        .then(() =>{
+          console.log('Profile name pic updated');
+        })
+        .catch(error =>{
+          console.log(error);
+        })
       })
       .catch((error) => {
         console.log(error);
       });
   };
+
+  const handleImageUpload = async(e)=>{
+
+    const image = e.target.files[0];
+    console.log(image);
+
+    const formData = new FormData();
+    formData.append('image', image);
+
+    const imageUploadURL = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_image_upload_key}`
+    const res = await axios.post(imageUploadURL, formData)
+   setProfilePic(res.data.data.url);
+
+  }
 
   return (
     <motion.div
@@ -77,6 +108,22 @@ const Register = () => {
               {...register("name", { required: true })}
               className="input input-bordered w-full pl-10 bg-gray-50 border-gray-300 text-gray-800 placeholder-gray-400 focus:bg-white focus:border-lime-400"
               placeholder="Enter your Name"
+            />
+          </div>
+          {errors.name && (
+            <p className="text-red-500 text-sm mt-1">Name is required</p>
+          )}
+        </motion.div>
+        {/* Image URL */}
+        <motion.div className="relative" variants={itemVariant}>
+          <label className="label font-semibold text-gray-700">Name</label>
+          <div className="relative">
+            <FaUser className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600" />
+            <input
+              type="file"
+              onChange={handleImageUpload}
+              className="input input-bordered w-full pl-10 bg-gray-50 border-gray-300 text-gray-800 placeholder-gray-400 focus:bg-white focus:border-lime-400"
+              placeholder="Your profile picture"
             />
           </div>
           {errors.name && (

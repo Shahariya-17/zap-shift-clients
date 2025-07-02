@@ -1,26 +1,37 @@
 import React from "react";
 import useAuth from "../../../hooks/useAuth";
 import { useLocation, useNavigate } from "react-router";
+import useAxios from "../../../hooks/useAxios";
 
 const SocialLogin = () => {
-  const {signInWithGoogle} = useAuth();
-  const location = useLocation()
+  const { signInWithGoogle } = useAuth();
+  const location = useLocation();
   const navigate = useNavigate();
-  const from = location.state?.from || '/';
-  
+  const from = location.state?.from || "/";
+  const axiosInstance = useAxios();
 
-  const handleGoogleSignIn = () =>{
-        signInWithGoogle()
-        .then(result =>{
-            console.log(result.user);
-            navigate(from);
-        })
-        .catch(error =>{
-            console.log(error);
-        })
-    }
+  const handleGoogleSignIn = () => {
+    signInWithGoogle()
+      .then(async(result) => {
+        const user = result.user;
+        console.log(result.user);
 
-    
+        const userInfo = {
+          email: user.email,
+          role: "user", // default role
+          created_at: new Date().toISOString(),
+          last_log_in: new Date().toISOString(),
+        };
+
+        const res = await axiosInstance.post('/users', userInfo);
+        console.log('User update info', res.data);
+
+        navigate(from);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   return (
     <div className="w-full text-center mt-6 px-4">
@@ -32,7 +43,8 @@ const SocialLogin = () => {
       </div>
 
       {/* Google Login Button */}
-      <button onClick={handleGoogleSignIn}
+      <button
+        onClick={handleGoogleSignIn}
         className="w-full flex items-center justify-center gap-3 bg-white text-gray-700 border border-gray-300 px-6 py-3 rounded-xl shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-300 font-medium"
       >
         <svg

@@ -6,6 +6,7 @@ import SocialLogin from "../SocialLogin/SocialLogin";
 import { motion } from "framer-motion";
 import { FaUser, FaEnvelope, FaLock } from "react-icons/fa";
 import axios from "axios";
+import useAxios from "../../../hooks/useAxios";
 
 // Animation variants
 const containerVariant = {
@@ -29,15 +30,25 @@ const Register = () => {
     formState: { errors },
   } = useForm();
   const { createUser, updateUserProfile } = useAuth();
-  const [profilePic, setProfilePic] = useState('')
+  const [profilePic, setProfilePic] = useState('');
+  const axiosInstance = useAxios();
 
   const onSubmit = (data) => {
     console.log(data);
     createUser(data.email, data.password)
-      .then((result) => {
+      .then(async(result) => {
         console.log(result.user);
 
         // update userinfo in the DB
+        const userInfo = {
+          email: data.email,
+          role: 'user',   // default role
+          created_at : new Date().toISOString(),
+          last_log_in : new Date().toISOString(),
+        }
+
+        const userRes = await axiosInstance.post('/users', userInfo);
+        console.log(userRes.data);
 
         // update user profile in firebase
         const userProfile = {

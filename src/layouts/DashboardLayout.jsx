@@ -5,6 +5,12 @@ import { TbHomeHeart, TbTruckDelivery, TbPackages } from "react-icons/tb";
 import { MdPayment } from "react-icons/md";
 import { FaUserEdit } from "react-icons/fa";
 import { HiOutlineReceiptRefund } from "react-icons/hi2";
+import { FaUsers, FaUserClock } from "react-icons/fa";
+
+const activeClass = ({ isActive }) =>
+  isActive
+    ? "flex items-center gap-2 font-bold text-lime-600"
+    : "flex items-center gap-2 text-gray-700";
 
 const DashboardLayout = () => {
   return (
@@ -50,42 +56,46 @@ const DashboardLayout = () => {
           {/* Sidebar content here */}
           <ProFastLogo></ProFastLogo>
           <li>
-            <NavLink to="/" className="flex items-center gap-2">
+            <NavLink to="/" className={activeClass}>
               <TbHomeHeart className="text-xl" />
               Home
             </NavLink>
           </li>
           <li>
-            <NavLink
-              to="/dashboard/myParcels"
-              className="flex items-center gap-2"
-            >
+            <NavLink to="/dashboard/myParcels" className={activeClass}>
               <TbPackages className="text-xl" />
               My Parcels
             </NavLink>
           </li>
           <li>
-            <NavLink
-              to="/dashboard/paymentHistory"
-              className="flex items-center gap-2"
-            >
+            <NavLink to="/dashboard/paymentHistory" className={activeClass}>
               <HiOutlineReceiptRefund className="text-xl" />
               Payment History
             </NavLink>
           </li>
           <li>
-            <NavLink to="/dashboard/track" className="flex items-center gap-2">
+            <NavLink to="/dashboard/track" className={activeClass}>
               <TbTruckDelivery className="text-xl" />
               Track a Package
             </NavLink>
           </li>
           <li>
-            <NavLink
-              to="/dashboard/profile"
-              className="flex items-center gap-2"
-            >
+            <NavLink to="/dashboard/profile" className={activeClass}>
               <FaUserEdit className="text-xl" />
               Update Profile
+            </NavLink>
+          </li>
+          {/* New Links */}
+          <li>
+            <NavLink to="/dashboard/activeRiders" className={activeClass}>
+              <FaUsers className="text-xl" />
+              Active Riders
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/dashboard/pendingRiders" className={activeClass}>
+              <FaUserClock className="text-xl" />
+              Pending Riders
             </NavLink>
           </li>
         </ul>

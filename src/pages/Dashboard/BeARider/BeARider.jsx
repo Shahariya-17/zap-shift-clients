@@ -1,10 +1,15 @@
 import React, { useState, useMemo } from "react";
 import { motion } from "framer-motion";
+import { useLoaderData } from "react-router-dom";
 import useAuth from "../../../hooks/useAuth";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
-import { useLoaderData } from "react-router-dom";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+
+// Icons
+import { FaUser, FaEnvelope, FaPhoneAlt, FaIdCard, FaMotorcycle } from "react-icons/fa";
+import { MdLocationCity, MdPlace } from "react-icons/md";
+import { BsFillCalendarDateFill } from "react-icons/bs";
 
 const MySwal = withReactContent(Swal);
 
@@ -62,82 +67,102 @@ const BeARider = () => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 40 }}
+      initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      className="max-w-2xl mx-auto px-6 py-10 bg-white shadow-xl rounded-2xl"
+      transition={{ duration: 0.6 }}
+      className="max-w-5xl mx-auto bg-white p-8 rounded-3xl shadow-2xl border mt-10 mb-10"
     >
-      <h2 className="text-3xl font-bold mb-6 text-center text-lime-600">
+      <motion.h2
+        className="text-4xl font-bold text-center text-lime-600 mb-10"
+        initial={{ scale: 0.8 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 0.4 }}
+      >
         🏍️ Be a Rider Application
-      </h2>
-      <form onSubmit={handleSubmit} className="space-y-5">
-        {/* Readonly Name */}
-        <div>
-          <label className="block mb-1 font-medium">Name</label>
+      </motion.h2>
+
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        {/* Personal Info */}
+        <div className="col-span-full">
+          <h3 className="text-xl font-semibold flex items-center gap-2 text-gray-700 mb-2">
+            <FaUser className="text-lime-500" /> Personal Information
+          </h3>
+        </div>
+
+        <div className="col-span-1">
           <input
             type="text"
             value={formData.name}
             readOnly
             className="input input-bordered w-full bg-gray-100"
+            placeholder="Full Name"
           />
         </div>
 
-        {/* Readonly Email */}
-        <div>
-          <label className="block mb-1 font-medium">Email</label>
+        <div className="col-span-1">
           <input
             type="email"
             value={formData.email}
             readOnly
             className="input input-bordered w-full bg-gray-100"
+            placeholder="Email"
           />
         </div>
 
-        {/* Age */}
-        <div>
-          <label className="block mb-1 font-medium">Age</label>
-          <input
-            type="number"
-            name="age"
-            placeholder="Your Age"
-            value={formData.age}
-            onChange={handleChange}
-            className="input input-bordered w-full"
-            required
-          />
+        <div className="col-span-1">
+          <div className="relative">
+            <BsFillCalendarDateFill className="absolute left-3 top-3 text-gray-400" />
+            <input
+              type="number"
+              name="age"
+              placeholder="Age"
+              value={formData.age}
+              onChange={handleChange}
+              className="input input-bordered w-full pl-10"
+              required
+            />
+          </div>
         </div>
 
-        {/* Phone */}
-        <div>
-          <label className="block mb-1 font-medium">Phone Number</label>
-          <input
-            type="text"
-            name="phone"
-            placeholder="Phone Number"
-            value={formData.phone}
-            onChange={handleChange}
-            className="input input-bordered w-full"
-            required
-          />
+        <div className="col-span-1">
+          <div className="relative">
+            <FaPhoneAlt className="absolute left-3 top-3 text-gray-400" />
+            <input
+              type="text"
+              name="phone"
+              placeholder="Phone Number"
+              value={formData.phone}
+              onChange={handleChange}
+              className="input input-bordered w-full pl-10"
+              required
+            />
+          </div>
         </div>
 
-        {/* NID */}
-        <div>
-          <label className="block mb-1 font-medium">NID Card Number</label>
-          <input
-            type="text"
-            name="nid"
-            placeholder="Your NID Number"
-            value={formData.nid}
-            onChange={handleChange}
-            className="input input-bordered w-full"
-            required
-          />
+        <div className="col-span-1">
+          <div className="relative">
+            <FaIdCard className="absolute left-3 top-3 text-gray-400" />
+            <input
+              type="text"
+              name="nid"
+              placeholder="NID Card Number"
+              value={formData.nid}
+              onChange={handleChange}
+              className="input input-bordered w-full pl-10"
+              required
+            />
+          </div>
         </div>
 
-        {/* Region */}
-        <div>
-          <label className="block mb-1 font-medium">Region</label>
+        {/* Location Info */}
+        <div className="col-span-full pt-4">
+          <h3 className="text-xl font-semibold flex items-center gap-2 text-gray-700 mb-2">
+            <MdPlace className="text-lime-500" /> Location Information
+          </h3>
+        </div>
+
+        <div className="col-span-1">
           <select
             name="region"
             value={formData.region}
@@ -154,9 +179,7 @@ const BeARider = () => {
           </select>
         </div>
 
-        {/* District */}
-        <div>
-          <label className="block mb-1 font-medium">District</label>
+        <div className="col-span-1">
           <select
             name="district"
             value={formData.district}
@@ -173,13 +196,18 @@ const BeARider = () => {
           </select>
         </div>
 
-        {/* Bike Brand */}
-        <div>
-          <label className="block mb-1 font-medium">Bike Brand</label>
+        {/* Bike Info */}
+        <div className="col-span-full pt-4">
+          <h3 className="text-xl font-semibold flex items-center gap-2 text-gray-700 mb-2">
+            <FaMotorcycle className="text-lime-500" /> Bike Information
+          </h3>
+        </div>
+
+        <div className="col-span-1">
           <input
             type="text"
             name="bikeBrand"
-            placeholder="e.g. Yamaha, Honda"
+            placeholder="Bike Brand (e.g. Yamaha, Hero)"
             value={formData.bikeBrand}
             onChange={handleChange}
             className="input input-bordered w-full"
@@ -187,13 +215,11 @@ const BeARider = () => {
           />
         </div>
 
-        {/* Bike Reg Number */}
-        <div>
-          <label className="block mb-1 font-medium">Bike Registration Number</label>
+        <div className="col-span-1">
           <input
             type="text"
             name="bikeRegNumber"
-            placeholder="e.g. DHAKA-XYZ-1234"
+            placeholder="Bike Registration Number"
             value={formData.bikeRegNumber}
             onChange={handleChange}
             className="input input-bordered w-full"
@@ -202,14 +228,16 @@ const BeARider = () => {
         </div>
 
         {/* Submit Button */}
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          type="submit"
-          className="btn bg-lime-500 hover:bg-lime-600 text-white font-bold w-full"
-        >
-          🚀 Submit Application
-        </motion.button>
+        <div className="col-span-full">
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            type="submit"
+            className="btn btn-lg bg-lime-500 hover:bg-lime-400 text-black w-full font-bold rounded-xl"
+          >
+            🚀 Submit Rider Application
+          </motion.button>
+        </div>
       </form>
     </motion.div>
   );

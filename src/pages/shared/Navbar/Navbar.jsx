@@ -111,9 +111,9 @@ const Navbar = () => {
             {navItems}
           </ul>
         </div>
-        <a className="text-xl md:text-2xl font-bold whitespace-nowrap">
+        <span className="text-xl md:text-2xl font-bold whitespace-nowrap">
           <ProFastLogo />
-        </a>
+        </span>
       </div>
 
       {/* Center: Full menu */}

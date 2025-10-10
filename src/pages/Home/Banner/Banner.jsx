@@ -17,15 +17,12 @@ const Banner = () => {
     >
       <div className="mt-5">
         <img src={bannerImage1} alt="Banner 1" />
-        <p className=" hidden md:flex text-center justify-center align-center font-bold legend">Legend 1</p>
       </div>
       <div className="mt-5">
         <img src={bannerImage2} alt="Banner 2" />
-        <p className="hidden md:flex text-center justify-center align-center font-bold legend">Legend 2</p>
       </div>
       <div className="mt-5">
         <img src={bannerImage3} alt="Banner 3" />
-        <p className="hidden md:flex text-center justify-center align-center font-bold legend">Legend 3</p>
       </div>
     </Carousel>
   );

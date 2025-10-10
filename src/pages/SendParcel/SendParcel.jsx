@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { motion } from "framer-motion";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import moment from "moment";
@@ -9,8 +10,6 @@ import useAxiosSecure from "../../hooks/useAxiosSecure";
 const MySwal = withReactContent(Swal);
 
 const SendParcel = ({ senderName = "Shahariyar" }) => {
-  
-
   const {
     register,
     handleSubmit,
@@ -125,33 +124,22 @@ const SendParcel = ({ senderName = "Shahariyar" }) => {
 
     const breakdownHTML = `
       <div style="font-size:14px; text-align:left; line-height:1.6; background-color:#f9f9f9; padding:15px; border-radius:10px;">
-        <div style="margin-bottom:10px;">
-          <span style="font-weight:bold; color:#444;">\uD83D\uDCE6 Parcel Type:</span> <span>${typeLabel}</span><br/>
-          <span style="font-weight:bold; color:#444;">⚖️ Weight:</span> <span>${weight} kg</span><br/>
-          <span style="font-weight:bold; color:#444;">📍 Delivery Zone:</span> <span>${zone}</span>
-        </div>
-        <hr style="border: 0; border-top: 1px solid #ccc; margin: 10px 0;"/>
-        <div style="margin-bottom:10px;">
-          <span style="font-weight:bold; color:#444;">\uD83D\uDCB0 Base Cost:</span> <span>৳${baseCost}</span><br/>
-          <span style="font-weight:bold; color:#444;">➕ Extra Charges:</span> <span>৳${extraCharge} (${extraCharge > 0 ? 'Weight exceeds 3kg' : 'No extra charge'})</span><br/>
-          <span style="font-weight:bold; color:#444;">📘 Pricing Note:</span> <span>${conditionNote}</span>
-        </div>
-        <hr style="border: 0; border-top: 1px solid #ccc; margin: 10px 0;"/>
-        <div style="margin-top:10px;">
-          <span style="font-size:18px; font-weight:bold;">\uD83D\uDCB5 Total Cost: 
-            <span style="color:green;">৳${totalCost}</span>
-          </span>
-        </div>
+        <b>Parcel Type:</b> ${typeLabel}<br/>
+        <b>Weight:</b> ${weight} kg<br/>
+        <b>Delivery Zone:</b> ${zone}<hr/>
+        <b>Base Cost:</b> ৳${baseCost}<br/>
+        <b>Extra Charge:</b> ৳${extraCharge}<br/>
+        <b>Total:</b> <span style="color:green;">৳${totalCost}</span>
       </div>
     `;
 
     const result = await MySwal.fire({
-      title: "Delivery Cost Breakdown",
+      title: "Cost Breakdown",
       html: breakdownHTML,
       icon: "info",
       showCancelButton: true,
-      confirmButtonText: "Proceed to Payment",
-      cancelButtonText: "Go Back to Edit",
+      confirmButtonText: "Confirm & Proceed",
+      cancelButtonText: "Cancel",
     });
 
     if (result.isConfirmed) {
@@ -163,225 +151,224 @@ const SendParcel = ({ senderName = "Shahariyar" }) => {
         tracking_id: `TRK-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
         status: "pending",
         payment_status: "unpaid",
-        tracking_history: [
-          {
-            status: "pending",
-            timestamp: moment().format("YYYY-MM-DD HH:mm:ss"),
-            note: "Parcel created",
-          },
-        ],
       };
 
-      console.log("Saving Parcel:", parcelData);
-
-      axiosSecure.post('/parcels', parcelData)
-      .then(res =>{
-        console.log(res.data);
-        if(res.data.insertedId){
-          //  TODO : redirect to a payment page
-          MySwal.fire({
-            title: "Redirecting...",
-            text: "Proceeding to payment gateway.",
-            icon: "success",
-            timer: 1500,
-            showConfirmButton: false
-          });
-        }
-      })
-
-
-      
+      const res = await axiosSecure.post("/parcels", parcelData);
+      if (res.data.insertedId) {
+        MySwal.fire({
+          title: "Success!",
+          text: "Parcel submitted successfully. Redirecting...",
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      }
     }
   };
 
-  // (Rest of the form UI remains unchanged and continues below...)
-
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-lg">
-      <h2 className="text-2xl font-bold text-center">Send a Parcel</h2>
-      <p className="text-center text-gray-500 mb-6">
-        Fill in the required details to submit your parcel
-      </p>
-       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {/* Parcel Info */}
-        <div>
-          <h3 className="text-lg font-semibold mb-2">📦 Parcel Info</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="flex items-center space-x-4">
-              <label className="label cursor-pointer">
-                <input
-                  type="radio"
-                  value="document"
-                  {...register("type", { required: true })}
-                  className="radio"
-                />
-                <span className="ml-2">Document</span>
-              </label>
-              <label className="label cursor-pointer">
-                <input
-                  type="radio"
-                  value="non-document"
-                  {...register("type", { required: true })}
-                  className="radio"
-                />
-                <span className="ml-2">Non-Document</span>
-              </label>
-            </div>
-            <input
-              type="text"
-              {...register("title", { required: true })}
-              placeholder="Parcel Title"
-              className="input input-bordered w-full"
-            />
-            {parcelType === "non-document" && (
-              <input
-                type="number"
-                step="0.1"
-                {...register("weight")}
-                placeholder="Weight (kg)"
-                className="input input-bordered w-full"
-              />
-            )}
-          </div>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-lime-100 via-white to-green-50 py-12 px-4">
+      <motion.div
+        className="max-w-5xl mx-auto bg-white shadow-2xl rounded-3xl p-10 relative overflow-hidden"
+        initial={{ opacity: 0, y: 60 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
+        <motion.h2
+          className="text-4xl font-bold text-center text-lime-600 mb-2"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          Send a Parcel
+        </motion.h2>
+        <p className="text-center text-gray-500 mb-10">
+          Fill in all required details to create a parcel order
+        </p>
 
-        {/* Sender Info */}
-        <div className="grid md:grid-cols-2 gap-6">
-          <div>
-            <h3 className="text-lg font-semibold mb-2">🧑‍💼 Sender Info</h3>
-            <div className="space-y-4">
-              <input
-                type="text"
-                value={senderName}
-                readOnly
-                className="input input-bordered w-full bg-gray-100"
-              />
-              <input
-                type="text"
-                {...register("sender_contact", { required: true })}
-                placeholder="Contact Number"
-                className="input input-bordered w-full"
-              />
-              <select
-                {...register("sender_region", { required: true })}
-                className="select select-bordered w-full"
-              >
-                <option value="">Select Region</option>
-                {regions.map((region) => (
-                  <option key={region} value={region}>
-                    {region}
-                  </option>
-                ))}
-              </select>
-              <select
-                {...register("sender_district", { required: true })}
-                className="select select-bordered w-full"
-              >
-                <option value="">Select District</option>
-                {senderDistricts.map((district) => (
-                  <option key={district} value={district}>
-                    {district}
-                  </option>
-                ))}
-              </select>
-              <select
-                {...register("sender_service_center", { required: true })}
-                className="select select-bordered w-full"
-              >
-                <option value="">Select Area</option>
-                {senderWarehouses.map((area, idx) => (
-                  <option key={idx} value={area}>
-                    {area}
-                  </option>
-                ))}
-              </select>
-              <input
-                type="text"
-                {...register("sender_address", { required: true })}
-                placeholder="Full Address"
-                className="input input-bordered w-full"
-              />
-              <textarea
-                {...register("pickup_instruction", { required: true })}
-                placeholder="Pickup Instruction"
-                className="textarea textarea-bordered w-full"
-              />
-            </div>
-          </div>
-
-          {/* Receiver Info */}
-          <div>
-            <h3 className="text-lg font-semibold mb-2">🏠 Receiver Info</h3>
-            <div className="space-y-4">
-              <input
-                type="text"
-                {...register("receiver_name", { required: true })}
-                placeholder="Receiver Name"
-                className="input input-bordered w-full"
-              />
-              <input
-                type="text"
-                {...register("receiver_contact", { required: true })}
-                placeholder="Contact Number"
-                className="input input-bordered w-full"
-              />
-              <select
-                {...register("receiver_region", { required: true })}
-                className="select select-bordered w-full"
-              >
-                <option value="">Select Region</option>
-                {regions.map((region) => (
-                  <option key={region} value={region}>
-                    {region}
-                  </option>
-                ))}
-              </select>
-              <select
-                {...register("receiver_district", { required: true })}
-                className="select select-bordered w-full"
-              >
-                <option value="">Select District</option>
-                {receiverDistricts.map((district) => (
-                  <option key={district} value={district}>
-                    {district}
-                  </option>
-                ))}
-              </select>
-              <select
-                {...register("receiver_service_center", { required: true })}
-                className="select select-bordered w-full"
-              >
-                <option value="">Select Area</option>
-                {receiverWarehouses.map((area, idx) => (
-                  <option key={idx} value={area}>
-                    {area}
-                  </option>
-                ))}
-              </select>
-              <input
-                type="text"
-                {...register("receiver_address", { required: true })}
-                placeholder="Delivery Address"
-                className="input input-bordered w-full"
-              />
-              <textarea
-                {...register("delivery_instruction", { required: true })}
-                placeholder="Delivery Instruction"
-                className="textarea textarea-bordered w-full"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="text-center pt-4">
-          <button
-            type="submit"
-            className="btn bg-lime-400 text-black w-full rounded-2xl px-10"
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
+          {/* Parcel Info */}
+          <motion.div
+            className="p-6 bg-gradient-to-r from-lime-50 to-green-50 rounded-2xl shadow-inner"
+            whileHover={{ scale: 1.01 }}
           >
-            Submit Parcel
-          </button>
-        </div>
-      </form>
+            <h3 className="text-xl font-semibold mb-3 text-gray-700">
+              📦 Parcel Info
+            </h3>
+            <div className="grid md:grid-cols-3 gap-5">
+              <div className="flex items-center gap-5">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    value="document"
+                    {...register("type", { required: true })}
+                    className="radio radio-success"
+                  />
+                  <span>Document</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    value="non-document"
+                    {...register("type", { required: true })}
+                    className="radio radio-success"
+                  />
+                  <span>Non-Document</span>
+                </label>
+              </div>
+              <input
+                {...register("title", { required: true })}
+                placeholder="Parcel Title"
+                className="input input-bordered w-full focus:ring-2 focus:ring-lime-400 transition-all"
+              />
+              {parcelType === "non-document" && (
+                <input
+                  type="number"
+                  step="0.1"
+                  {...register("weight")}
+                  placeholder="Weight (kg)"
+                  className="input input-bordered w-full focus:ring-2 focus:ring-lime-400 transition-all"
+                />
+              )}
+            </div>
+          </motion.div>
+
+          {/* Sender & Receiver */}
+          <motion.div
+            className="grid md:grid-cols-2 gap-8"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+          >
+            {/* Sender Info */}
+            <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-shadow">
+              <h3 className="text-lg font-semibold mb-4 text-gray-700">
+                🧑‍💼 Sender Info
+              </h3>
+              <div className="space-y-3">
+                <input
+                  type="text"
+                  value={senderName}
+                  readOnly
+                  className="input input-bordered w-full bg-gray-100"
+                />
+                <input
+                  {...register("sender_contact", { required: true })}
+                  placeholder="Contact Number"
+                  className="input input-bordered w-full focus:ring-2 focus:ring-lime-400"
+                />
+                <select
+                  {...register("sender_region", { required: true })}
+                  className="select select-bordered w-full"
+                >
+                  <option value="">Select Region</option>
+                  {regions.map((region) => (
+                    <option key={region}>{region}</option>
+                  ))}
+                </select>
+                <select
+                  {...register("sender_district", { required: true })}
+                  className="select select-bordered w-full"
+                >
+                  <option value="">Select District</option>
+                  {senderDistricts.map((d) => (
+                    <option key={d}>{d}</option>
+                  ))}
+                </select>
+                <select
+                  {...register("sender_service_center", { required: true })}
+                  className="select select-bordered w-full"
+                >
+                  <option value="">Select Area</option>
+                  {senderWarehouses.map((a, i) => (
+                    <option key={i}>{a}</option>
+                  ))}
+                </select>
+                <input
+                  {...register("sender_address", { required: true })}
+                  placeholder="Full Address"
+                  className="input input-bordered w-full"
+                />
+                <textarea
+                  {...register("pickup_instruction", { required: true })}
+                  placeholder="Pickup Instruction"
+                  className="textarea textarea-bordered w-full"
+                />
+              </div>
+            </div>
+
+            {/* Receiver Info */}
+            <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-shadow">
+              <h3 className="text-lg font-semibold mb-4 text-gray-700">
+                🏠 Receiver Info
+              </h3>
+              <div className="space-y-3">
+                <input
+                  {...register("receiver_name", { required: true })}
+                  placeholder="Receiver Name"
+                  className="input input-bordered w-full"
+                />
+                <input
+                  {...register("receiver_contact", { required: true })}
+                  placeholder="Contact Number"
+                  className="input input-bordered w-full"
+                />
+                <select
+                  {...register("receiver_region", { required: true })}
+                  className="select select-bordered w-full"
+                >
+                  <option value="">Select Region</option>
+                  {regions.map((r) => (
+                    <option key={r}>{r}</option>
+                  ))}
+                </select>
+                <select
+                  {...register("receiver_district", { required: true })}
+                  className="select select-bordered w-full"
+                >
+                  <option value="">Select District</option>
+                  {receiverDistricts.map((d) => (
+                    <option key={d}>{d}</option>
+                  ))}
+                </select>
+                <select
+                  {...register("receiver_service_center", { required: true })}
+                  className="select select-bordered w-full"
+                >
+                  <option value="">Select Area</option>
+                  {receiverWarehouses.map((a, i) => (
+                    <option key={i}>{a}</option>
+                  ))}
+                </select>
+                <input
+                  {...register("receiver_address", { required: true })}
+                  placeholder="Delivery Address"
+                  className="input input-bordered w-full"
+                />
+                <textarea
+                  {...register("delivery_instruction", { required: true })}
+                  placeholder="Delivery Instruction"
+                  className="textarea textarea-bordered w-full"
+                />
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Submit */}
+          <motion.div
+            className="text-center pt-6"
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            <button
+              type="submit"
+              className="btn bg-lime-500 text-black w-full rounded-2xl hover:bg-lime-400 hover:shadow-lg transition-all py-3 text-lg font-semibold"
+            >
+              🚀 Submit Parcel
+            </button>
+          </motion.div>
+        </form>
+      </motion.div>
     </div>
   );
 };

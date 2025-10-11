@@ -24,15 +24,16 @@ const navLinks = [
 const activeClass = ({ isActive }) =>
   isActive
     ? "flex items-center gap-3 px-4 py-2 rounded-xl bg-gradient-to-r from-lime-500 to-green-500 text-white font-semibold shadow-md scale-[1.02] transition-all duration-300"
-    : "flex items-center gap-3 px-4 py-2 rounded-xl text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 hover:scale-[1.03]";
+    : "flex items-center gap-3 px-4 py-2 rounded-xl text-gray-800 dark:text-gray-100 hover:text-lime-600 dark:hover:text-lime-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-[1.03]";
 
 const DashboardLayout = () => {
   return (
     <div className="drawer lg:drawer-open min-h-screen bg-gray-50 dark:bg-gray-900">
       <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
-      {/* Main Content Area */}
+
+      {/* Main Content */}
       <div className="drawer-content flex flex-col">
-        {/* Navbar (Mobile) */}
+        {/* Navbar for mobile */}
         <div className="navbar lg:hidden bg-lime-500 text-white shadow-md w-full">
           <div className="flex-none">
             <label
@@ -58,9 +59,9 @@ const DashboardLayout = () => {
           <div className="mx-2 flex-1 text-center font-semibold">Dashboard</div>
         </div>
 
-        {/* Page content */}
+        {/* Page Content */}
         <motion.div
-          className="p-4"
+          className="p-4 text-gray-900 dark:text-gray-100"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
@@ -76,14 +77,11 @@ const DashboardLayout = () => {
           initial={{ x: -100, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.4 }}
-          className="menu bg-white dark:bg-gray-800 text-base-content min-h-full w-80 p-6 shadow-lg border-r border-gray-200 dark:border-gray-700"
+          className="menu bg-white dark:bg-gray-800 text-base-content min-h-full w-80 p-6 shadow-xl border-r border-gray-200 dark:border-gray-700"
         >
           {/* Logo */}
           <div className="mb-6 flex justify-center">
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              transition={{ duration: 0.3 }}
-            >
+            <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.3 }}>
               <ProFastLogo />
             </motion.div>
           </div>
@@ -94,10 +92,11 @@ const DashboardLayout = () => {
               key={idx}
               whileHover={{ x: 5 }}
               transition={{ type: "spring", stiffness: 300 }}
+              className="mb-2"
             >
               <NavLink to={link.to} className={activeClass}>
                 {link.icon}
-                <span>{link.label}</span>
+                <span className="text-sm font-medium">{link.label}</span>
               </NavLink>
             </motion.li>
           ))}

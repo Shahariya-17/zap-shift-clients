@@ -146,7 +146,7 @@ const SendParcel = ({ senderName = "Shahariyar" }) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          Send a Parcel 🚀
+          Send a Parcel 
         </motion.h2>
         <p className="text-center text-gray-500 mb-10 text-lg">
           Fill in all required details to book your parcel easily.
@@ -171,7 +171,7 @@ const SendParcel = ({ senderName = "Shahariyar" }) => {
             variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
           >
             <h3 className="text-2xl font-semibold mb-4 text-gray-700">
-              📦 Parcel Information
+               Parcel Information
             </h3>
             <div className="grid md:grid-cols-3 gap-5">
               <div className="flex items-center gap-5">
@@ -219,7 +219,7 @@ const SendParcel = ({ senderName = "Shahariyar" }) => {
             {/* Sender */}
             <div className="bg-white/80 rounded-2xl p-6 border border-gray-100 shadow-lg hover:shadow-2xl transition-all duration-300">
               <h3 className="text-xl font-semibold mb-4 text-gray-700">
-                🧑‍💼 Sender Information
+                 Sender Information
               </h3>
               <div className="space-y-3">
                 <input
@@ -262,7 +262,7 @@ const SendParcel = ({ senderName = "Shahariyar" }) => {
             {/* Receiver */}
             <div className="bg-white/80 rounded-2xl p-6 border border-gray-100 shadow-lg hover:shadow-2xl transition-all duration-300">
               <h3 className="text-xl font-semibold mb-4 text-gray-700">
-                🏠 Receiver Information
+                 Receiver Information
               </h3>
               <div className="space-y-3">
                 <input
@@ -308,7 +308,7 @@ const SendParcel = ({ senderName = "Shahariyar" }) => {
               type="submit"
               className="btn bg-gradient-to-r from-lime-500 to-green-500 text-black font-semibold rounded-2xl px-10 py-4 text-lg hover:shadow-lime-300/50 hover:shadow-2xl transition-all duration-300"
             >
-              ✈️ Submit Parcel
+               Submit Parcel
             </button>
           </motion.div>
         </motion.form>

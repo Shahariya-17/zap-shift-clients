@@ -1,11 +1,13 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import ProFastLogo from "../ProFastLogo/ProFastLogo";
 import { LuCircleArrowOutUpRight } from "react-icons/lu";
+import { HiOutlineMenuAlt3, HiOutlineX } from "react-icons/hi";
+import ProFastLogo from "../ProFastLogo/ProFastLogo";
 import useAuth from "../../../hooks/useAuth";
 
 const Navbar = () => {
   const { user, logOut } = useAuth();
+  const [menuOpen, setMenuOpen] = React.useState(false);
 
   const handleLogOut = () => {
     logOut()
@@ -15,37 +17,39 @@ const Navbar = () => {
 
   const navItems = (
     <>
-      <li className="whitespace-nowrap">
+      <li>
         <NavLink
           to="/"
           className={({ isActive }) =>
             isActive
-              ? "bg-lime-500 text-white px-3 md:px-4 py-2 rounded text-sm md:text-base"
-              : "px-3 md:px-4 py-2 rounded hover:bg-gray-100 hover:text-black text-sm md:text-base"
+              ? "bg-lime-500 text-white px-4 py-2 rounded-md block"
+              : "px-4 py-2 rounded-md hover:bg-gray-100 text-black block"
           }
         >
           Home
         </NavLink>
       </li>
-      <li className="whitespace-nowrap">
+
+      <li>
         <NavLink
           to="/sendParcel"
           className={({ isActive }) =>
             isActive
-              ? "bg-lime-500 text-white px-3 md:px-4 py-2 rounded text-sm md:text-base"
-              : "px-3 md:px-4 py-2 rounded hover:bg-gray-100 hover:text-black text-sm md:text-base"
+              ? "bg-lime-500 text-white px-4 py-2 rounded-md block"
+              : "px-4 py-2 rounded-md hover:bg-gray-100 text-black block"
           }
         >
           Send Parcel
         </NavLink>
       </li>
-      <li className="whitespace-nowrap">
+
+      <li>
         <NavLink
           to="/coverage"
           className={({ isActive }) =>
             isActive
-              ? "bg-lime-500 text-white px-3 md:px-4 py-2 rounded text-sm md:text-base"
-              : "px-3 md:px-4 py-2 rounded hover:bg-gray-100 hover:text-black text-sm md:text-base"
+              ? "bg-lime-500 text-white px-4 py-2 rounded-md block"
+              : "px-4 py-2 rounded-md hover:bg-gray-100 text-black block"
           }
         >
           Coverage
@@ -53,13 +57,13 @@ const Navbar = () => {
       </li>
 
       {user && (
-        <li className="whitespace-nowrap">
+        <li>
           <NavLink
             to="/dashboard"
             className={({ isActive }) =>
               isActive
-                ? "bg-lime-500 text-white px-3 md:px-4 py-2 rounded text-sm md:text-base"
-                : "px-3 md:px-4 py-2 rounded hover:bg-gray-100 hover:text-black text-sm md:text-base"
+                ? "bg-lime-500 text-white px-4 py-2 rounded-md block"
+                : "px-4 py-2 rounded-md hover:bg-gray-100 text-black block"
             }
           >
             Dashboard
@@ -67,13 +71,13 @@ const Navbar = () => {
         </li>
       )}
 
-      <li className="whitespace-nowrap">
+      <li>
         <NavLink
           to="/about"
           className={({ isActive }) =>
             isActive
-              ? "bg-lime-500 text-white px-3 md:px-4 py-2 rounded text-sm md:text-base"
-              : "px-3 md:px-4 py-2 rounded hover:bg-gray-100 hover:text-black text-sm md:text-base"
+              ? "bg-lime-500 text-white px-4 py-2 rounded-md block"
+              : "px-4 py-2 rounded-md hover:bg-gray-100 text-black block"
           }
         >
           About Us
@@ -84,89 +88,103 @@ const Navbar = () => {
 
   return (
     <>
-      <div className="navbar bg-base-100 shadow-sm px-2 md:px-6 w-full fixed top-0 left-0 z-50">
-        
-        <div className="navbar-start">
-          <div className="dropdown">
-            <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h8m-8 6h16"
-                />
-              </svg>
-            </div>
-            <ul
-              tabIndex={0}
-              className="menu menu-sm dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52 z-10"
-            >
-              {navItems}
-            </ul>
-          </div>
-          <span className="text-xl md:text-2xl font-bold whitespace-nowrap">
+      <nav className="fixed top-0 left-0 w-full bg-white shadow-sm z-50">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center justify-between h-16">
+          <div className="flex items-center gap-2">
             <ProFastLogo />
-          </span>
-        </div>
+          </div>
 
-        
-        <div className="navbar-center hidden lg:flex">
-          <ul className="menu menu-horizontal px-1 gap-1 md:gap-2 flex-wrap">
-            {navItems}
-          </ul>
-        </div>
+          
+          <ul className="hidden lg:flex gap-2">{navItems}</ul>
 
-        
-        <div className="navbar-end gap-2 md:gap-3 text-sm md:text-base whitespace-nowrap">
-          {user ? (
-            <button
-              onClick={handleLogOut}
-              className="btn bg-lime-400 text-black"
-            >
-              Log Out
-            </button>
-          ) : (
+          
+          <div className="hidden lg:flex items-center gap-3">
+            {user ? (
+              <button
+                onClick={handleLogOut}
+                className="px-4 py-2 bg-lime-400 rounded-full text-black font-medium hover:bg-lime-500 transition"
+              >
+                Log Out
+              </button>
+            ) : (
+              <NavLink
+                to="/login"
+                className={({ isActive }) =>
+                  `px-4 py-2 rounded-full border border-gray-300 font-medium transition ${
+                    isActive
+                      ? "bg-lime-500 text-white"
+                      : "bg-white text-black hover:bg-gray-100"
+                  }`
+                }
+              >
+                Log In
+              </NavLink>
+            )}
+
             <NavLink
-              to="/login"
+              to="/beARider"
               className={({ isActive }) =>
-                `px-3 md:px-4 py-1.5 md:py-2 rounded-full border border-gray-300 font-medium transition ${
+                `flex items-center px-4 py-2 rounded-full border font-semibold transition ${
                   isActive
                     ? "bg-lime-500 text-white"
-                    : "bg-white text-black hover:bg-gray-100"
+                    : "bg-white text-black border-gray-300 hover:bg-lime-400"
                 }`
               }
             >
-              Log In
+              Be a Rider
+              <span className="ml-2 w-6 h-6 rounded-full bg-black text-white flex items-center justify-center">
+                <LuCircleArrowOutUpRight size={14} />
+              </span>
             </NavLink>
-          )}
+          </div>
 
-          <NavLink
-            to="/beARider"
-            className={({ isActive }) =>
-              `flex items-center px-3 md:px-4 py-1.5 md:py-2 rounded-full border font-semibold transition ${
-                isActive
-                  ? "bg-lime-500 text-white"
-                  : "bg-white text-black border-gray-300 hover:bg-lime-400"
-              }`
-            }
+          
+          <button
+            className="lg:hidden p-2 text-2xl"
+            onClick={() => setMenuOpen(!menuOpen)}
           >
-            Be a rider
-            <span className="ml-2 w-5 h-5 md:w-6 md:h-6 rounded-full bg-black text-white flex items-center justify-center">
-              <LuCircleArrowOutUpRight size={14} />
-            </span>
-          </NavLink>
+            {menuOpen ? <HiOutlineX /> : <HiOutlineMenuAlt3 />}
+          </button>
         </div>
-      </div>
+
+       
+        {menuOpen && (
+          <div className="lg:hidden bg-white shadow-inner border-t animate-slide-down">
+            <ul className="flex flex-col p-3 gap-1">{navItems}</ul>
+
+            <div className="flex flex-col gap-2 p-3">
+              {user ? (
+                <button
+                  onClick={handleLogOut}
+                  className="px-4 py-2 bg-lime-400 rounded-full text-black font-medium hover:bg-lime-500 transition"
+                >
+                  Log Out
+                </button>
+              ) : (
+                <NavLink
+                  to="/login"
+                  className="px-4 py-2 rounded-full border border-gray-300 text-black font-medium hover:bg-gray-100"
+                >
+                  Log In
+                </NavLink>
+              )}
+
+              <NavLink
+                to="/beARider"
+                className="flex items-center justify-center px-4 py-2 rounded-full border font-semibold bg-white text-black border-gray-300 hover:bg-lime-400 transition"
+              >
+                Be a Rider
+                <span className="ml-2 w-6 h-6 rounded-full bg-black text-white flex items-center justify-center">
+                  <LuCircleArrowOutUpRight size={14} />
+                </span>
+              </NavLink>
+            </div>
+          </div>
+        )}
+      </nav>
 
       
-      <div className="h-20"></div>
+      <div className="h-16"></div>
     </>
   );
 };
